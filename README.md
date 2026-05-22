@@ -24,17 +24,17 @@ flake.nix   devShell pinning all tools
 ```sh
 cd /path/to/this/repo
 
-# 1. devShell — pulls claude-code, qmd, agent-browser, openskills, markitdown
+# 1. devShell — pulls claude-code, qmd, agent-browser, openskills, node
 direnv allow              # or: nix develop
 
-# 2. Install upstream skills into .claude/skills/ (gitignored)
-npx openskills install https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-markdown
-npx openskills install https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-cli
-npx openskills install https://github.com/kepano/obsidian-skills/tree/main/skills/defuddle
-npx openskills install https://github.com/vercel-labs/agent-browser
+# 2. Restore the four skills from skills-lock.json (committed)
+#    Files land in .agents/skills/<name>/ and get symlinked into .claude/skills/
+npx -y skills experimental_install
 
-# 3. qmd index (no-op on empty wiki, sets up .qmd/)
-qmd index wiki/
+# 3. Initialize the qmd index (one-time per machine)
+qmd init
+qmd collection add wiki
+qmd embed                 # downloads models on first run (~600 MB)
 
 # 4. Open Claude in the vault
 claude
@@ -54,6 +54,3 @@ There are no slash commands — drive everything in natural language. `CLAUDE.md
 
 Claude touches many files in one pass — updating an entity page also updates its backlinks, the index, and any concept pages that mention it.
 
-## Obsidian
-
-The vault is plain markdown — open this directory as an Obsidian vault for visual editing and graph view. Path-based wikilinks (`[[entities/services/foo]]`) work in both Obsidian and `rg`.

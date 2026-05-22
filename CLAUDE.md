@@ -30,9 +30,9 @@ date: YYYY-MM-DD                     # type=daily only (must equal filename)
 
 Update `updated:` whenever you edit a file. For `type: living`, also bump `last_updated:`.
 
-## 3. Wikilinks
+## 3. Markdown + wikilinks
 
-Use **path-based** wikilinks: `[[entities/services/foo]]`, `[[sources/pdfs/bar]]`, `[[concepts/idempotency]]`. Paths are relative to `wiki/`. Path-based links work in both Obsidian and `rg`.
+Follow the conventions taught by the `obsidian-markdown` skill. For wikilinks, prefer **path-based** form (e.g. `[[entities/services/foo]]`, paths relative to `wiki/`) so links resolve under both Obsidian and `rg`.
 
 ## 4. Filing decision tree
 
@@ -86,14 +86,13 @@ If you create a new living note, give it a kebab-case filename matching the titl
 
 When the user drops a file in `raw/` (or anywhere) and asks you to ingest it:
 
-**PDF / docx / pptx / xlsx / audio / m4a / mp3 / wav:**
-1. Move the file to `raw/<type>/<filename>` (create the subdir if missing). Types: `pdfs/`, `docs/`, `audio/`.
-2. Run `markitdown raw/<type>/<filename> > /tmp/<slug>.md`.
-3. Read the converted markdown, clean obvious noise.
-4. Write `wiki/sources/<type>/<slug>.md` with full frontmatter (`type: source`, `source: ../../../raw/<type>/<filename>`, `ingested_via: markitdown`) followed by the cleaned body.
-5. Identify *recurring* entities/concepts mentioned (services, projects, ideas). For each, create or update `wiki/entities/<kind>/<slug>.md` or `wiki/concepts/<slug>.md` with a `[[sources/<type>/<slug>]]` backlink. Don't promote one-off mentions — leave them in the source page.
-6. Update `wiki/index.md` if the topic is new at the top level.
-7. Run `qmd index wiki/`.
+**PDF:**
+1. Move the file to `raw/pdfs/<filename>` (create the subdir if missing).
+2. Use the Read tool to read the PDF directly (Claude reads PDFs natively).
+3. Write `wiki/sources/pdfs/<slug>.md` with frontmatter (`type: source`, `source: ../../../raw/pdfs/<filename>`, `ingested_via: read`) followed by a faithful, well-structured markdown rendering of the document.
+4. Identify *recurring* entities/concepts mentioned (services, projects, ideas). For each, create or update `wiki/entities/<kind>/<slug>.md` or `wiki/concepts/<slug>.md` with a `[[sources/pdfs/<slug>]]` backlink. Don't promote one-off mentions — leave them in the source page.
+5. Update `wiki/index.md` if the topic is new at the top level.
+6. Run `qmd update && qmd embed` to refresh the search index.
 
 **Image:**
 1. Move to `raw/images/<filename>`.
@@ -106,6 +105,8 @@ When the user drops a file in `raw/` (or anywhere) and asks you to ingest it:
 2. Save to `raw/web/<slug>/{cleaned.md, original.html}` if both are available.
 3. Write `wiki/sources/web/<slug>.md` (`source: ../../../raw/web/<slug>/`, `ingested_via: defuddle` or `agent-browser`).
 4. Same downstream.
+
+**Other formats** (docx, pptx, xlsx, audio): not supported in v1. Tell the user and ask whether to install a converter.
 
 **Refusals:**
 - Refuse if the path is outside `raw/`.
@@ -139,12 +140,12 @@ Report findings as a punch list. If the user says "fix it," apply automatic repa
 | Tool | When to use |
 |---|---|
 | `qmd` (MCP `search`, also CLI) | Search across `wiki/`. Primary retrieval mechanism. |
-| `markitdown` | Convert PDF/Office/audio/image to markdown. Default ingestion converter. |
+| `Read` (built-in) | Read PDFs and images directly during ingestion. |
 | `defuddle` skill | Clean a web URL to markdown. |
 | `agent-browser` skill | Live browser automation (CDP). Use for dynamic pages, logins, multi-step flows. |
 | `obsidian-cli` skill | Vault file ops (rename with backlink updates, etc.). |
-| `obsidian-markdown` skill | Reference for Obsidian-flavored markdown formatting (callouts, embeds, properties). |
-| `rg` / `fd` | Fallback search and file discovery. Always allowed. |
+| `obsidian-markdown` skill | Markdown formatting conventions for the vault. |
+| `rg` / `fd` | Fallback search and file discovery. |
 
 ## 11. Recognizing intent (no slash commands)
 

@@ -1,5 +1,6 @@
 .claude/skills/
 .claude/settings.local.json
+.agents/skills/
 .env.local
 .DS_Store
 node_modules/

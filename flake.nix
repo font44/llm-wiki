@@ -18,20 +18,19 @@
       in {
         devShells.default = pkgs.mkShell {
           packages = [
-            agents.claude-code
-            agents.qmd
             agents.agent-browser
+            agents.claude-code
             agents.openskills
+            agents.qmd
 
-            pkgs.python313Packages.markitdown
-            pkgs.nodejs
-
-            pkgs.ripgrep
-            pkgs.fd
-            pkgs.jq
-            pkgs.yq-go
-            pkgs.git
+            pkgs.defuddle
             pkgs.direnv
+            pkgs.fd
+            pkgs.git
+            pkgs.jq
+            pkgs.nodejs
+            pkgs.ripgrep
+            pkgs.yq-go
           ];
         };
       });
