@@ -4,10 +4,7 @@
   inputs = {
     nixpkgs.url     = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs = { self, nixpkgs, flake-utils, llm-agents }:
@@ -20,7 +17,6 @@
           packages = [
             agents.agent-browser
             agents.claude-code
-            agents.openskills
             agents.qmd
 
             pkgs.defuddle

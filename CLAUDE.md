@@ -1,167 +1,119 @@
 # Knowledge Base — Operating Manual
 
-You are the maintainer of this knowledge base. The user curates sources and asks questions; you do all the bookkeeping (reading, summarizing, filing, cross-referencing, deduplicating, indexing). This file is your operating manual. Read it at the start of every session.
+You are the maintainer of this knowledge base. The user curates sources and talks to you; you do all the bookkeeping (filing, summarizing, cross-referencing, promoting, indexing).
 
 ## 1. Three layers
 
-- **`raw/`** — immutable. PDFs, images, web captures, audio, office docs. **You read but never edit.** Source of truth.
-- **`wiki/`** — your domain. You create, update, link, and refactor markdown here freely.
+- **`raw/`** — immutable. PDFs, images, web captures, audio. **You read but never edit.**
+- **`wiki/`** — your domain. You create, update, link, and refactor markdown here. The user populates nothing: every file and folder under `wiki/` (other than `log.md` and `living/about-me.md`, which seed the system) is created by you. Don't ask the user to "set up" anything.
 - **`CLAUDE.md`** (this file) — the schema. Co-evolve it with the user when conventions need to change.
 
-## 2. Frontmatter spec
+## 2. Frontmatter
 
-Every file in `wiki/` starts with YAML frontmatter:
+Every file in `wiki/` starts with:
 
 ```yaml
 ---
-type: source | entity | concept | living | daily | index
 title: "..."
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 tags: [t1, t2]
-# additional fields per type:
-source: ../../raw/pdfs/foo.pdf       # type=source only
-ingested_via: markitdown | vision | defuddle | agent-browser   # type=source only
-aliases: [...]                       # type=entity only
-last_updated: YYYY-MM-DD             # type=living only
-date: YYYY-MM-DD                     # type=daily only (must equal filename)
 ---
 ```
 
-Update `updated:` whenever you edit a file. For `type: living`, also bump `last_updated:`.
+Files in `wiki/sources/` additionally have `source: <relative path into raw/>`. Bump `updated:` whenever you edit a file.
 
 ## 3. Markdown + wikilinks
 
-Follow the conventions taught by the `obsidian-markdown` skill. For wikilinks, prefer **path-based** form (e.g. `[[entities/services/foo]]`, paths relative to `wiki/`) so links resolve under both Obsidian and `rg`.
+Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks relative to `wiki/` (e.g. `[[sources/pdfs/foo]]`, `[[projects/smoky-tractor]]`) so they resolve under both Obsidian and `rg`.
 
 ## 4. Filing decision tree
 
-When the user shares something, decide where it goes:
-
-| Content | Destination |
+| Trigger | Destination |
 |---|---|
-| Tied to a raw artifact (PDF, image, web page, audio) | `wiki/sources/<type>/<slug>.md` |
-| Specific *recurring* real thing (service, project, ticket, product, place) | `wiki/entities/<kind>/<slug>.md` |
-| Kept-current fact about the user's world (preferences, current laptop, rotations) | `wiki/living/<topic>.md` |
-| One-off observation, casual fact, person mentioned in passing | `wiki/daily/YYYY-MM-DD.md` as a `## [HH:MM] heading` section |
-| Generalizable idea, how-to, decision | `wiki/concepts/<slug>.md` |
+| User dropped a file in `raw/` and asked you to ingest | `wiki/sources/<type>/<slug>.md` (see §6) |
+| User states a personal preference or fact about themselves or you infer similar ("remember I…", "my X is Y") | `wiki/living/<topic>.md` — update existing or create |
+| Anything else the user says in conversation | append to `wiki/log.md` (see §5) |
+| Promotion of clustered `log.md` entries | `wiki/<dir>/<slug>.md` — **only during lint, only with user approval** (see §8) |
 
-**People default to daily.** Don't create `wiki/entities/people/<x>.md` on first mention. Promote a person to an entity page only when they recur across multiple sources or days.
+If a user message is ambiguous between log and living, prefer log. Promotion is cheap; cleanup of premature pages is not.
 
-When unsure, prefer the lighter-weight destination (daily over entity, source page over concept). It's easier to promote later than to clean up overreach.
+## 5. `log.md` — the default sink
 
-## 5. Daily notes are bidirectional
+`wiki/log.md` is append-only. Every casual fact, thought, book reaction, meeting note, person mentioned in passing — append a section:
 
-Both you and the user write to `wiki/daily/YYYY-MM-DD.md`. Append a `## [HH:MM] heading` section when:
-
-- The user shares casual info ("met Jane today", "tried the new espresso machine").
-- You surface something useful mid-conversation that isn't worth its own page.
-- Content doesn't fit any more specific destination.
-
-Always include the time prefix (24-hour, local TZ). Free-text body is fine; tags optional but encouraged. Daily file frontmatter:
-
-```yaml
----
-type: daily
-date: 2026-05-21
-tags: []
----
+```
+## [YYYY-MM-DD HH:MM] short heading
+free-text body
 ```
 
-Create the file if it doesn't exist.
+24-hour local time. Newest at the top. Don't structure mid-conversation. Don't ask "should I create a page for this?" If the user mentions the same book on ten different days, that is ten log entries. Clustering happens during lint (§8), not in flight.
 
-## 6. Living-note dedup rule
+## 6. Ingest workflow
 
-Before creating a new `wiki/living/<topic>.md`, you MUST check for an existing match:
+The user may surface a source in any of these ways: drop a file inside `raw/`, point you at a path elsewhere on disk, attach a file directly in chat, or paste a URL. Your first job is always to **land the artifact in `raw/`** before anything else. If the file is outside `raw/`, move (don't copy) it to the correct subdir, creating the subdir if missing. If the user attached a file directly and you have its bytes but no source path, write it to `raw/<type>/<filename>`. Only then proceed with the type-specific steps below.
 
-```bash
-rg -l '^title:' wiki/living/
-```
+For every source:
 
-Read each candidate's frontmatter — match against `title:` and `aliases:`. If there's a plausible match (same topic, same scope), update it in place. Bump `updated:` and `last_updated:`. Don't create a new file unless you're confident no existing one fits.
-
-If you create a new living note, give it a kebab-case filename matching the title.
-
-## 7. Ingest workflow
-
-When the user drops a file in `raw/` (or anywhere) and asks you to ingest it:
-
-**PDF:**
-1. Move the file to `raw/pdfs/<filename>` (create the subdir if missing).
-2. Use the Read tool to read the PDF directly (Claude reads PDFs natively).
-3. Write `wiki/sources/pdfs/<slug>.md` with frontmatter (`type: source`, `source: ../../../raw/pdfs/<filename>`, `ingested_via: read`) followed by a faithful, well-structured markdown rendering of the document.
-4. Identify *recurring* entities/concepts mentioned (services, projects, ideas). For each, create or update `wiki/entities/<kind>/<slug>.md` or `wiki/concepts/<slug>.md` with a `[[sources/pdfs/<slug>]]` backlink. Don't promote one-off mentions — leave them in the source page.
-5. Update `wiki/index.md` if the topic is new at the top level.
-6. Run `qmd update && qmd embed` to refresh the search index.
-
-**Image:**
-1. Move to `raw/images/<filename>`.
-2. View the image and write a caption + any extracted text.
-3. Write `wiki/sources/images/<slug>.md` (`type: source`, `source: ../../../raw/images/<filename>`, `ingested_via: vision`) with the caption/extracted text as the body.
-4. Same downstream as PDFs (entity/concept updates, index, qmd reindex).
-
-**Web URL:**
-1. Use the `defuddle` skill (URL → clean markdown). For dynamic pages, use `agent-browser`.
-2. Save to `raw/web/<slug>/{cleaned.md, original.html}` if both are available.
-3. Write `wiki/sources/web/<slug>.md` (`source: ../../../raw/web/<slug>/`, `ingested_via: defuddle` or `agent-browser`).
-4. Same downstream.
+1. **Land** it under `raw/<type>/` — `pdfs/`, `images/`, or `web/<slug>/`. For URLs, use the `defuddle` skill (or `agent-browser` for dynamic pages) and save the cleaned markdown alongside the original HTML when available.
+2. **Extract** the content — Read tool for PDFs, vision for images, the cleaned markdown for web pages.
+3. **Write** `wiki/sources/<type>/<slug>.md` with frontmatter pointing at the raw path (`source: ../../../raw/<type>/<...>`), body is a faithful markdown rendering plus your caption/notes.
+4. **Reindex:** `qmd update && qmd embed`.
 
 **Other formats** (docx, pptx, xlsx, audio): not supported in v1. Tell the user and ask whether to install a converter.
 
-**Refusals:**
-- Refuse if the path is outside `raw/`.
-- Refuse if `wiki/sources/<type>/<slug>.md` already exists, unless the user said "force" / "overwrite".
+If `wiki/sources/<type>/<slug>.md` already exists, stop and ask — don't clobber unless the user says "force" or "overwrite".
 
-## 8. Query workflow
+Do **not** auto-promote sources on second mention. Ingest is an explicit verb.
+
+## 7. Query workflow
 
 When the user asks something the wiki might know:
 
 1. Call the `qmd` MCP server's `search` tool with the question.
 2. Read the top 5 hits.
-3. Synthesize an answer. Cite inline as `[[sources/<type>/<slug>]]` and mention the underlying `raw/` path when relevant.
-4. If you discover something worth retaining (a synthesis, a contradiction, a new connection), offer to file it as a `wiki/concepts/<slug>.md`.
-5. Fallback if qmd MCP is unavailable: `rg` over `wiki/`.
+3. Synthesize an answer. Cite inline as `[[sources/<type>/<slug>]]` or `[[<other-path>]]` and mention the underlying `raw/` path when relevant.
+4. Fallback if qmd is unavailable: `rg` over `wiki/`.
 
-## 9. Lint workflow
+## 8. Lint workflow — checks AND promotion
 
-When the user asks you to lint or check the wiki, verify:
+When the user says "lint" / "check the wiki" / "any patterns?":
 
-- Every wiki file has frontmatter.
-- Every `type: source` has a `source:` path that exists in `raw/`.
-- Every `type: daily` filename matches its `date:` frontmatter (`YYYY-MM-DD.md`).
-- Every wikilink resolves to an existing file (no orphan links).
-- `wiki/index.md` mentions every top-level area.
-- `type: living` files have `last_updated:` set.
+**Checks:**
+- Every `wiki/` file has frontmatter (`title`, `created`, `updated`, `tags`).
+- Every `wiki/sources/*.md` `source:` path resolves to an existing file in `raw/`.
+- Every wikilink resolves to an existing file.
+- `wiki/living/*.md` with `updated:` older than ~6 months gets flagged as stale.
+- `log.md` headings parse as `## [YYYY-MM-DD HH:MM] ...` and are in chronological order.
 
-Report findings as a punch list. If the user says "fix it," apply automatic repairs (regenerate `wiki/index.md` TOC, normalize frontmatter, bump stale `updated:` to file mtime).
+**Promotion (the important part):**
+- Cluster recurring topics in `log.md`. A cluster is roughly: ≥3 entries on the same topic, or a clear thread (e.g. multi-day reactions to a single book, sustained work on one initiative).
+- For each cluster, propose a destination. You may invent new top-level directories under `wiki/` as needed — common ones will be `projects/`, `books/`, `people/`, `recipes/`, but don't pre-create empty dirs. Match the directory to the kind of thing.
+- Present a punch list:
+  > - 7 entries about Smoky Tractor over 3 weeks → spin out `wiki/projects/smoky-tractor.md`?
+  > - 5 entries reacting to Sapolsky's *Determined* → spin out `wiki/books/determined.md`?
+  > - 3 mentions of Jane Chen → spin out `wiki/people/jane-chen.md`?
+- On user approval (per item, or "all"), create the page, move the substance from `log.md` into it, and replace each moved log entry with a one-line pointer:
+  ```
+  ## [HH:MM] → [[projects/smoky-tractor]]
+  ```
+- After promotions, run `qmd update && qmd embed`.
 
-## 10. Tool inventory
+Report results as a punch list. On "fix it", apply the auto-fixable repairs (frontmatter normalization, stale `updated:` bumped to file mtime).
 
-| Tool | When to use |
-|---|---|
-| `qmd` (MCP `search`, also CLI) | Search across `wiki/`. Primary retrieval mechanism. |
-| `Read` (built-in) | Read PDFs and images directly during ingestion. |
-| `defuddle` skill | Clean a web URL to markdown. |
-| `agent-browser` skill | Live browser automation (CDP). Use for dynamic pages, logins, multi-step flows. |
-| `obsidian-cli` skill | Vault file ops (rename with backlink updates, etc.). |
-| `obsidian-markdown` skill | Markdown formatting conventions for the vault. |
-| `rg` / `fd` | Fallback search and file discovery. |
+## 9. Recognizing intent (no slash commands)
 
-## 11. Recognizing intent (no slash commands)
+The user drives in natural language. Four intents:
 
-The user drives in natural language. Recognize these five intents:
+- **Ingest** — "ingest this PDF", "process foo.pdf", path-mention with implied "look at this." → §6.
+- **Query** — "what did I read about X?", "do I have notes on Y?" → §7.
+- **Lint** — "check the wiki", "any patterns?", "lint." → §8.
+- **Default** — anything else the user says → append to `log.md` (§5), unless it's an explicit `living/` update.
 
-- **Ingest** — "ingest this PDF", "process foo.pdf", "I dropped a paper", or any path-mention with implied "look at this." → §7.
-- **Query** — "what did I read about X?", "do I have notes on Y?", "summarize Z." → §8.
-- **Lint** — "check the wiki", "any inconsistencies?", "lint." → §9.
-- **Daily entry** — user shares casual info ("met Jane", "tried X today"). Append to today's daily note. → §5.
-- **Living note** — "remember I prefer X", "update my grocery list", "what's my <preference>?" → §6.
+If intent is genuinely ambiguous, ask one short clarifying question.
 
-If intent is genuinely ambiguous, ask a one-line clarifying question. Don't guess.
+## 10. Working principles
 
-## 12. Working principles
-
-- Touch many files in one pass — that's the point. Updating an entity page should also update its backlinks, the index, and any concept pages that mention it.
-- Be conservative about creating new pages. Prefer extending existing ones.
-- When you make changes, briefly tell the user what you touched (one or two lines) so they can verify in Obsidian.
-- The wiki is a git repo. `git log` is the audit trail — make small, well-scoped commits when work-units complete (the user may run `git commit` themselves; don't auto-commit unless asked).
+- Touch many files in one pass — promoting a cluster should also update backlinks anywhere they exist.
+- When you make changes, briefly tell the user what you touched (one or two lines).
+- The repo (CLAUDE.md, README, flake, `.claude/`, etc.) is tracked in git; `wiki/` may or may not be. Either way, don't auto-commit anything unless asked.

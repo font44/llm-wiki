@@ -1,30 +1,30 @@
 # Knowledge Base
 
-A personal AI-managed knowledge base. You drop sources (PDFs, images, web pages, audio, ad-hoc facts) into `raw/`; Claude reads them, files distilled markdown into `wiki/`, maintains cross-references, and answers questions across the wiki via [qmd](https://github.com/tobi/qmd) hybrid search.
+A personal AI-managed knowledge base. You drop sources (PDFs, images, web pages) into `raw/` and talk to Claude in natural language. Claude files cleaned markdown into `wiki/`, appends casual notes to `wiki/log.md`, and — during periodic lint passes — clusters recurring topics from the log into dedicated pages (projects, books, people, etc.). Retrieval is via [qmd](https://github.com/tobi/qmd) hybrid search.
 
 The full operating manual for the agent is in [`CLAUDE.md`](./CLAUDE.md).
 
 ## Layout
 
 ```
-raw/        immutable source artifacts (PDFs, images, web, audio)
+raw/        immutable source artifacts (PDFs, images, web)
 wiki/       LLM-managed markdown
-  index.md      what's in the vault
-  daily/        YYYY-MM-DD.md one-off jottings (bidirectional)
-  living/       kept-current topical notes (preferences, rotations, etc.)
-  entities/     canonical page per recurring real thing
-  concepts/     ideas, how-tos, decisions
-  sources/      one md page per ingested raw artifact
+  log.md       append-only stream of everything you say
+  living/      kept-current personal notes (about-me, preferences, etc.)
+  sources/     one md page per ingested raw artifact
+  <other>/     created by Claude during lint promotions (projects, books, people, …)
 .claude/    Claude Code config (qmd MCP wiring; skills installed locally)
 flake.nix   devShell pinning all tools
 ```
+
+You don't create folders or stub files. Claude does.
 
 ## Bootstrap (fresh machine)
 
 ```sh
 cd /path/to/this/repo
 
-# 1. devShell — pulls claude-code, qmd, agent-browser, openskills, node
+# 1. devShell — pulls claude-code, qmd, agent-browser, defuddle, node
 direnv allow              # or: nix develop
 
 # 2. Restore the four skills from skills-lock.json (committed)
@@ -40,17 +40,11 @@ qmd embed                 # downloads models on first run (~600 MB)
 claude
 ```
 
-To refresh skills later: `npx openskills update`.
-
 ## Usage
 
-There are no slash commands — drive everything in natural language. `CLAUDE.md` teaches Claude to recognize:
+Drive everything in natural language. Claude recognizes four intents:
 
 - **Ingest** — "ingest this PDF", "process foo.pdf", "I dropped a paper in raw/"
 - **Query** — "what did I read about X?", "do I have notes on Y?"
-- **Lint** — "check the wiki", "any inconsistencies?"
-- **Daily entry** — share casual info ("met Jane today"), Claude appends to today's daily note
-- **Living note** — "remember I prefer X", "update my grocery list"
-
-Claude touches many files in one pass — updating an entity page also updates its backlinks, the index, and any concept pages that mention it.
-
+- **Lint** — "check the wiki", "any patterns?" — runs structural checks AND clusters recurring `log.md` topics into proposed promotions; you approve per item
+- **Default** — anything else you say is appended to `log.md` as a timestamped entry
