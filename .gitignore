@@ -1,0 +1,13 @@
+.claude/skills/
+.claude/settings.local.json
+.env.local
+.DS_Store
+node_modules/
+/tmp/
+.qmd/
+.direnv/
+
+# Uncomment if vault grows past ~1 GB:
+# raw/pdfs/
+# raw/images/
+# raw/audio/
