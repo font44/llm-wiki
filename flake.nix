@@ -16,7 +16,7 @@
         devShells.default = pkgs.mkShell {
           packages = [
             agents.agent-browser
-            agents.claude-code
+            agents.codex
             agents.qmd
 
             pkgs.defuddle

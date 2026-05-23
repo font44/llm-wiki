@@ -6,7 +6,7 @@ You are the maintainer of this knowledge base. The user curates sources and talk
 
 - **`raw/`** — immutable. PDFs, images, web captures, audio. **You read but never edit.**
 - **`wiki/`** — your domain. You create, update, link, and refactor markdown here. The user populates nothing: every file and folder under `wiki/` (other than `log.md` and `living/about-me.md`, which seed the system) is created by you. Don't ask the user to "set up" anything.
-- **`CLAUDE.md`** (this file) — the schema. Co-evolve it with the user when conventions need to change.
+- **`AGENTS.md`** (this file) — the schema. Co-evolve it with the user when conventions need to change.
 
 ## 2. Frontmatter
 
@@ -70,8 +70,8 @@ Do **not** auto-promote sources on second mention. Ingest is an explicit verb.
 
 When the user asks something the wiki might know:
 
-1. Call the `qmd` MCP server's `search` tool with the question.
-2. Read the top 5 hits.
+1. Run `qmd search "<terms>"` (BM25) or `qmd query "<question>"` (hybrid semantic) to surface candidates.
+2. Fetch the full sources via `qmd get <docid>` or `qmd multi-get '<pattern>'`.
 3. Synthesize an answer. Cite inline as `[[sources/<type>/<slug>]]` or `[[<other-path>]]` and mention the underlying `raw/` path when relevant.
 4. Fallback if qmd is unavailable: `rg` over `wiki/`.
 
@@ -116,4 +116,4 @@ If intent is genuinely ambiguous, ask one short clarifying question.
 
 - Touch many files in one pass — promoting a cluster should also update backlinks anywhere they exist.
 - When you make changes, briefly tell the user what you touched (one or two lines).
-- The repo (CLAUDE.md, README, flake, `.claude/`, etc.) is tracked in git; `wiki/` may or may not be. Either way, don't auto-commit anything unless asked.
+- The repo is tracked in git; but `wiki/` directory may or may not be.

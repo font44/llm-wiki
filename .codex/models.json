@@ -1,0 +1,23 @@
+{
+    "models": [
+        {
+            "slug": "qwen/qwen3.6-35b-a3b",
+            "context_window": 131072,
+            "display_name": "",
+            "supported_reasoning_levels": [],
+            "shell_type": "shell_command",
+            "visibility": "list",
+            "supported_in_api": true,
+            "priority": 0,
+            "base_instructions": "",
+            "supports_reasoning_summaries": false,
+            "support_verbosity": false,
+            "truncation_policy": {
+                "mode": "tokens",
+                "limit": 10000
+            },
+            "supports_parallel_tool_calls": true,
+            "experimental_supported_tools": []
+        }
+    ]
+}
