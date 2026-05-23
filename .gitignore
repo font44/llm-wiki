@@ -1,4 +1,8 @@
-.agents/skills/
+.agents/skills/*
+!.agents/skills/research/
+!.agents/skills/ingest/
+!.agents/skills/query/
+!.agents/skills/lint/
 .env.local
 .DS_Store
 node_modules/
@@ -6,12 +10,8 @@ node_modules/
 .qmd/
 .direnv/
 
-# Codex project-local CODEX_HOME — only commit config.toml; everything else is runtime state
 .codex/*
 !.codex/config.toml
 !.codex/models.json
 
-# Uncomment if vault grows past ~1 GB:
-# raw/pdfs/
-# raw/images/
-# raw/audio/
+.claude
