@@ -10,8 +10,7 @@ node_modules/
 .qmd/
 .direnv/
 
-.codex/*
-!.codex/config.toml
-!.codex/models.json
-
+.codex
 .claude
+
+wiki/

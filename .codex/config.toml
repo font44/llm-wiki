@@ -1,6 +1,0 @@
-model = "qwen/qwen3.6-35b-a3b"
-model_provider = "lmstudio"
-model_catalog_json = "models.json"
-
-[features]
-multi_agent = false

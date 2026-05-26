@@ -36,24 +36,27 @@ Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks
 | User asks to research / look up / find out something online | Use the **research** skill |
 | User says "lint" / "check the wiki" / "any patterns?" | Use the **lint** skill |
 | User states a personal preference or fact about themselves ("remember I…", "my X is Y") | `wiki/living/<topic>.md` — update existing or create |
-| Anything else the user says in conversation | Append to `wiki/log.md` (see §5) |
+| User shares substantive content the future-you should be able to recall | Append to `wiki/log.md` (see §5) |
 
 If a user message is ambiguous between log and living, prefer log. Promotion is cheap; cleanup of premature pages is not. If intent is genuinely ambiguous between two skills, ask one short clarifying question.
 
 ## 5. `log.md` — the default sink
 
-`wiki/log.md` is append-only. Every casual fact, thought, book reaction, meeting note, person mentioned in passing, research result — append a section:
+`wiki/log.md` captures *substantive content the user shares*. Append when the user states a fact, thought, opinion, decision, reaction, person, source, or anything worth recalling later.
+
+When in doubt, ask: *"is there anything new about the user, their world, or their thinking in this exchange?"* If no, don't log.
 
 ```
 ## [YYYY-MM-DD HH:MM] short heading
 free-text body
 ```
 
-24-hour local time. Newest at the top. Don't structure mid-conversation. Don't ask "should I create a page for this?" If the user mentions the same book on ten different days, that is ten log entries. Clustering happens during lint, not in flight.
+Don't structure mid-conversation. Don't ask "should I create a page for this?" If the user mentions the same book on ten different days, that is ten log entries. Clustering happens during lint, not in flight.
 
 ## 6. Working principles
 
+- **Browser automation only attaches to the user's running Chrome.** The `agent-browser` on PATH is a wrapper that injects `--cdp 9222` and refuses to run if Chrome is not on `127.0.0.1:9222`. Never try to bypass it (no `--auto-connect`, no fresh sessions, no headless, no alternative binary). If the wrapper exits non-zero, tell the user once and stop.
 - When you rename or move a wiki page, grep for and rewrite incoming `[[wikilinks]]` yourself — Obsidian's auto-rename only fires for renames done inside the Obsidian UI, not for shell edits.
 - When you make changes, briefly tell the user what you touched (one or two lines).
 - The repo is tracked in git; the `wiki/` directory may or may not be.
-- No emojis ever.
+- No emojis or em-dashes.
