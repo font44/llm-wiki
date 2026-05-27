@@ -21,28 +21,25 @@ If a URL is mentioned only in passing (no clear "save it" intent), use the `log`
 
 Your first job is always to **land the artifact in `raw/`** before anything else. If the file is outside `raw/`, move (don't copy) it to the correct subdir, creating the subdir if missing. If the user attached a file directly and you have its bytes but no source path, write it to `raw/<type>/<filename>`. Only then proceed with the type-specific steps below.
 
+Both `raw/` and `wiki/sources/` are sharded by date — one directory per local date (`YYYY-MM-DD`), like `wiki/log/`.
+
 For every source:
 
-1. **Land** under `raw/<type>/`:
-   - PDFs → `raw/pdfs/`
-   - Images → `raw/images/`
-   - Office docs (docx, pptx, xlsx) → `raw/docs/`
-   - Audio (mp3, m4a, wav) → `raw/audio/`
-   - Web pages → `raw/web/<slug>/` (containing the cleaned markdown and, when available, the original HTML)
+1. **Land** under `raw/<YYYY-MM-DD>/`, preserving the original filename (and extension). Web pages get their own slug subdir: `raw/<YYYY-MM-DD>/<slug>/` containing the cleaned markdown and, when available, the original HTML. Create the date dir on first write of that day; don't pre-create empty ones.
 2. **Extract** the content:
    - PDFs → `markitdown <path>`
    - Images → vision for description; `markitdown <path>` for embedded EXIF/OCR metadata
-   - Office docs → `markitdown <path>`
-   - Audio → first convert to 16 kHz mono WAV in `/tmp` (whisper-cli only reads WAV): `ffmpeg -i <path> -ar 16000 -ac 1 -c:a pcm_s16le /tmp/<slug>.wav`, then `whisper-cli -m .models/ggml-large-v3-turbo.bin -f /tmp/<slug>.wav -otxt -of <out-stem>` (writes `<out-stem>.txt`). If `.models/ggml-large-v3-turbo.bin` is missing, download as per the README.
+   - Office docs (docx, pptx, xlsx) → `markitdown <path>`
+   - Audio (mp3, m4a, wav) → first convert to 16 kHz mono WAV in `/tmp` (whisper-cli only reads WAV): `ffmpeg -i <path> -ar 16000 -ac 1 -c:a pcm_s16le /tmp/<slug>.wav`, then `whisper-cli -m .models/ggml-large-v3-turbo.bin -f /tmp/<slug>.wav -otxt -of <out-stem>` (writes `<out-stem>.txt`). If `.models/ggml-large-v3-turbo.bin` is missing, download as per the README.
    - Web pages → `defuddle parse <url> --md` (or `agent-browser` for dynamic / auth-walled pages)
-3. **Write** `wiki/sources/<type>/<slug>.md` with frontmatter pointing at the raw path:
+3. **Write** `wiki/sources/<YYYY-MM-DD>/<slug>.md` with frontmatter pointing at the raw path:
    ```yaml
    ---
    title: "..."
    created: YYYY-MM-DD
    updated: YYYY-MM-DD
    tags: [...]
-   source: ../../../raw/<type>/<...>
+   source: ../../../raw/<YYYY-MM-DD>/<...>
    ---
    ```
    Body: a faithful markdown rendering plus your caption / notes.
@@ -50,7 +47,7 @@ For every source:
 
 ## Collisions
 
-If `wiki/sources/<type>/<slug>.md` already exists, stop and ask — don't clobber unless the user says "force" or "overwrite".
+If `wiki/sources/<YYYY-MM-DD>/<slug>.md` already exists, stop and ask — don't clobber unless the user says "force" or "overwrite".
 
 ## Format coverage
 

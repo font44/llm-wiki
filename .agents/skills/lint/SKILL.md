@@ -18,7 +18,7 @@ This is judgment work, not just a checker. Mechanical checks are the floor; the 
 ## 1. Mechanical checks (cheap, deterministic)
 
 - Every `wiki/` file has frontmatter with `title`, `created`, `updated`, `tags`.
-- Every `wiki/sources/*.md` `source:` path resolves to an existing file in `raw/`.
+- Every `wiki/sources/<YYYY-MM-DD>/*.md` lives under a date dir matching `YYYY-MM-DD`, has the standard frontmatter, and its `source:` path resolves to an existing file in `raw/`.
 - Every wikilink `[[...]]` resolves to an existing file under `wiki/`.
 - `wiki/living/*.md` with `updated:` older than ~6 months is flagged stale.
 - `wiki/log/` layout: every entry lives at `wiki/log/<YYYY-MM-DD>/<HHMM>-<slug>.md`. Date dirs match `YYYY-MM-DD`; filenames start with a 4-digit `HHMM`. Each file has the standard frontmatter (`title`, `created`, `updated`, `tags` including `log`).

@@ -25,13 +25,13 @@ Files in `wiki/sources/` additionally have `source: <relative path into raw/>`. 
 
 ## 3. Markdown + wikilinks
 
-Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks relative to `wiki/` (e.g. `[[sources/pdfs/foo]]`, `[[projects/smoky-tractor]]`) so they resolve under both Obsidian and `rg`.
+Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks relative to `wiki/` (e.g. `[[sources/2026-05-27/foo]]`, `[[projects/smoky-tractor]]`) so they resolve under both Obsidian and `rg`.
 
 ## 4. Filing decision tree
 
 | Trigger | Destination |
 |---|---|
-| User wants to ingest a source (file drop, attached file, "ingest this", URL with save intent) | Use the **ingest** skill → `wiki/sources/<type>/<slug>.md` |
+| User wants to ingest a source (file drop, attached file, "ingest this", URL with save intent) | Use the **ingest** skill → `wiki/sources/<YYYY-MM-DD>/<slug>.md` |
 | User asks something the wiki might know | Use the **query** skill |
 | User asks to research / look up / find out something online | Use the **research** skill |
 | User says "lint" / "check the wiki" / "any patterns?" | Use the **lint** skill |
