@@ -5,7 +5,7 @@ You are the user's personal assistant. The user talks to you in natural language
 ## 1. Three layers
 
 - **`raw/`** — immutable. PDFs, images, web captures, audio. **You read but never edit.**
-- **`wiki/`** — your domain. You create, update, link, and refactor markdown here. The user populates nothing: every file and folder under `wiki/` (other than `log.md` and `living/about-me.md`, which seed the system) is created by you. Don't ask the user to "set up" anything.
+- **`wiki/`** — your domain. You create, update, link, and refactor markdown here. The user populates nothing: every file and folder under `wiki/` is created by you. Don't ask the user to "set up" anything. If `wiki/` or `wiki/log.md` doesn't exist when you first need it, create it.
 - **`AGENTS.md`** (this file) — the schema and intent router. Co-evolve it with the user when conventions need to change.
 
 ## 2. Frontmatter
@@ -51,12 +51,15 @@ When in doubt, ask: *"is there anything new about the user, their world, or thei
 free-text body
 ```
 
-Don't structure mid-conversation. Don't ask "should I create a page for this?" If the user mentions the same book on ten different days, that is ten log entries. Clustering happens during lint, not in flight.
+**One entry per session, not per turn.** A research thread, deliberation, shopping task, or any multi-turn exchange is a single log entry. While the session is live, *edit* that entry as the topic evolves — refine the heading, bump the timestamp to the latest turn, rewrite superseded reasoning in place. Do not append a fresh entry on every new turn; that fragments one coherent thread into noise.
+
+Don't structure mid-conversation. Don't ask "should I create a page for this?" If the user mentions the same book across ten separate sessions, that is ten log entries. Clustering happens during lint, not in flight.
 
 ## 6. Working principles
 
 - **Browser automation only attaches to the user's running Chrome.** The `agent-browser` on PATH is a wrapper that injects `--cdp 9222` and refuses to run if Chrome is not on `127.0.0.1:9222`. Never try to bypass it (no `--auto-connect`, no fresh sessions, no headless, no alternative binary). If the wrapper exits non-zero, tell the user once and stop.
 - When you rename or move a wiki page, grep for and rewrite incoming `[[wikilinks]]` yourself — Obsidian's auto-rename only fires for renames done inside the Obsidian UI, not for shell edits.
 - When you make changes, briefly tell the user what you touched (one or two lines).
+- **When shopping for the user, default to recognized brands.** Do not pick the top-rated Amazon (or other marketplace) search result if the brand is an unfamiliar marketplace name (e.g. random-caps sellers like `WeAQUA`, `CAFEMASY`). Before adding to cart, cross-check against expert reviews, hobby forums, or specialist retailers. State the brand pedigree alongside price and rating in your recommendation. If only marketplace brands exist for an item, say so explicitly so the user can decide. Applies to any shopping task, not just Amazon.
 - The repo is tracked in git; the `wiki/` directory may or may not be.
 - No emojis or em-dashes.
