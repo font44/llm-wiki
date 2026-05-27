@@ -33,7 +33,7 @@ For every source:
    - PDFs → `markitdown <path>`
    - Images → vision for description; `markitdown <path>` for embedded EXIF/OCR metadata
    - Office docs → `markitdown <path>`
-   - Audio → `markitdown <path>` (transcribes via the configured backend)
+   - Audio → first convert to 16 kHz mono WAV in `/tmp` (whisper-cli only reads WAV): `ffmpeg -i <path> -ar 16000 -ac 1 -c:a pcm_s16le /tmp/<slug>.wav`, then `whisper-cli -m .models/ggml-large-v3-turbo.bin -f /tmp/<slug>.wav -otxt -of <out-stem>` (writes `<out-stem>.txt`). If `.models/ggml-large-v3-turbo.bin` is missing, download as per the README.
    - Web pages → `defuddle parse <url> --md` (or `agent-browser` for dynamic / auth-walled pages)
 3. **Write** `wiki/sources/<type>/<slug>.md` with frontmatter pointing at the raw path:
    ```yaml

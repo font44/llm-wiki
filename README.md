@@ -37,6 +37,10 @@ mkdir -p .claude && ln -s ../.agents/skills .claude/skills
 qmd init
 qmd collection add wiki
 qmd embed                 # downloads models on first run (~600 MB)
+
+# 5. Download the Whisper turbo model for audio ingest (~1.5 GiB)
+mkdir -p .models
+bash <(curl -sL https://raw.githubusercontent.com/ggml-org/whisper.cpp/refs/heads/master/models/download-ggml-model.sh) large-v3-turbo .models
 ```
 
 ## Usage

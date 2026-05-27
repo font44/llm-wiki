@@ -51,13 +51,14 @@
             pkgs.defuddle
             pkgs.direnv
             pkgs.fd
-            pkgs.ffmpeg-headless
+            pkgs.ffmpeg
             pkgs.git
             pkgs.jq
             pkgs.nodejs
             pkgs.python313
             pkgs.ripgrep
             pkgs.uv
+			pkgs.whisper-cpp
             pkgs.yq-go
           ];
 
