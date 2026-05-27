@@ -13,7 +13,6 @@ wiki/       LLM-managed markdown
   living/      kept-current personal notes (about-me, preferences, etc.)
   sources/     one md page per ingested raw artifact
   <other>/     created by the AI during lint promotions (projects, books, people, …)
-.codex/     Codex config (project-local CODEX_HOME — config.toml + runtime state)
 flake.nix   devShell pinning all tools
 ```
 
@@ -24,24 +23,21 @@ You don't create folders or stub files. The AI does.
 ```sh
 cd /path/to/this/repo
 
-# 1. devShell — pulls codex, qmd, agent-browser, defuddle, node
+# 1. devShell — pulls qmd, agent-browser, defuddle, node
 direnv allow              # or: nix develop
-                          # .envrc points CODEX_HOME at $PWD/.codex
 
 # 2. Restore the bundled skills from skills-lock.json (committed)
-#    Files land in .agents/skills/<name>/, which Codex auto-discovers
+#    Files land in .agents/skills/<name>/
 npx -y skills experimental_install
 
-# 3. Initialize the qmd index (one-time per machine)
+# 3. (Claude Code only) symlink skills into .claude/ so Claude Code discovers them
+mkdir -p .claude && ln -s ../.agents/skills .claude/skills
+
+# 4. Initialize the qmd index (one-time per machine)
 qmd init
 qmd collection add wiki
 qmd embed                 # downloads models on first run (~600 MB)
-
-# 4. Open Codex in the vault (uses local LM Studio via .codex/config.toml)
-codex
 ```
-
-LM Studio must be running with `qwen/qwen3.6-35b-a3b` loaded at `http://localhost:1234`.
 
 ## Usage
 
