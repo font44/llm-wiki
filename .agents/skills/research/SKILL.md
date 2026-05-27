@@ -1,7 +1,7 @@
 ---
 name: research
-description: Web research workflow. Use ONLY when the user explicitly asks to research, look up, find out, or investigate something online, or directly invokes this skill. Drives an already-running Chrome via agent-browser auto-connect, opens search results, extracts clean markdown with defuddle, synthesizes a cited answer, and appends the result to wiki/log.md. Do NOT use for questions answerable from the local wiki (use the query skill instead) or for ingesting a specific URL the user already named (use the ingest skill).
-allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(defuddle:*), Bash(npx defuddle:*), Bash(qmd:*)
+description: Web research workflow. Use ONLY when the user explicitly asks to research, look up, find out, or investigate something online, or directly invokes this skill. Drives an already-running Chrome via agent-browser auto-connect, opens search results, extracts clean markdown with defuddle, synthesizes a cited answer, and persists the result via the log skill. Do NOT use for questions answerable from the local wiki (use the query skill instead) or for ingesting a specific URL the user already named (use the ingest skill).
+allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(defuddle:*), Bash(npx defuddle:*), Bash(qmd:*), Bash(mkdir:*), Bash(date:*)
 ---
 
 # Research
@@ -28,11 +28,9 @@ Triggers: "research X", "look up X", "find out about X", "investigate X", "searc
 
 5. **Synthesize.** Write a concise answer in the user's voice — not a list of summaries-per-source. Cite inline with `[1]`, `[2]` markers; end with a `**Sources:**` numbered list of URLs. Every non-trivial claim gets a citation.
 
-6. **Persist to log.md.** Append a single entry to `wiki/log.md` per the standard log format (newest at top):
+6. **Persist via the log skill.** Write or update `wiki/log/<today>/<HHMM>-<slug>.md` per the log skill's rules. Title the entry `research: <short question>`. Body:
 
    ```
-   ## [YYYY-MM-DD HH:MM] research: <short question>
-
    <synthesized answer with [1]/[2] inline markers>
 
    **Sources:**
@@ -40,11 +38,12 @@ Triggers: "research X", "look up X", "find out about X", "investigate X", "searc
    [2] https://...
    ```
 
-7. **Print the answer in chat too**, so the user sees it without opening the file. End with a one-line "logged to wiki/log.md" pointer.
+   The log skill handles directory creation, frontmatter, the same-session continuation rule, and `qmd update && qmd embed`.
+
+7. **Print the answer in chat too**, so the user sees it without opening the file. End with a one-line pointer to the file path written.
 
 ## Notes
 
 - Ignore the search engine's AI answers. Do your own research.
-- Date in the log heading uses today's local date in `YYYY-MM-DD HH:MM` 24-hour format.
 - Do NOT promote research entries into their own pages mid-flight. If a topic recurs, the lint skill clusters and promotes during a lint pass — same rule as any other log entry.
 - If the user's question is local (e.g. "what did I write about X"), this is the wrong skill — use the query skill instead.

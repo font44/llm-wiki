@@ -21,7 +21,7 @@ This is judgment work, not just a checker. Mechanical checks are the floor; the 
 - Every `wiki/sources/*.md` `source:` path resolves to an existing file in `raw/`.
 - Every wikilink `[[...]]` resolves to an existing file under `wiki/`.
 - `wiki/living/*.md` with `updated:` older than ~6 months is flagged stale.
-- `wiki/log.md` headings parse as `## [YYYY-MM-DD HH:MM] ...` and are in chronological order (newest at top).
+- `wiki/log/` layout: every entry lives at `wiki/log/<YYYY-MM-DD>/<HHMM>-<slug>.md`. Date dirs match `YYYY-MM-DD`; filenames start with a 4-digit `HHMM`. Each file has the standard frontmatter (`title`, `created`, `updated`, `tags` including `log`).
 
 ## 2. LLM-judgment passes (the important part)
 
@@ -67,7 +67,7 @@ Single punch list, grouped by pass. Each item is one or two lines, names the fil
 
 The user approves items individually or in bulk. For each:
 
-- **Promotion** — create destination page with frontmatter, move substance from `log.md`, leave a one-line pointer (`## [HH:MM] → [[projects/smoky-tractor]]`), then `qmd update && qmd embed`. (No incoming-backlink rewrites needed; the page didn't exist before.)
+- **Promotion** — create the destination page with frontmatter, move substance out of the source `wiki/log/<date>/<file>.md` (delete or empty the file once moved — don't leave stubs; the date dir simply has one fewer file), then `qmd update && qmd embed`. (No incoming-backlink rewrites needed; the page didn't exist before.)
 - **Missing concept page** — create a stub with what you know, link the mentioning pages to it, then `qmd update && qmd embed`.
 - **Missing cross-reference** — add the `[[wikilink]]` in both directions where appropriate.
 - **Contradiction / superseded** — update the older page, mark the obsolete claim, cite the newer source. If you can't reconcile without more info, leave a `TODO:` and surface it next lint.

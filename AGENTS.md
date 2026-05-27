@@ -5,7 +5,7 @@ You are the user's personal assistant. The user talks to you in natural language
 ## 1. Three layers
 
 - **`raw/`** — immutable. PDFs, Office docs, images, web captures, audio. **You read but never edit.**
-- **`wiki/`** — your domain. You create, update, link, and refactor markdown here. The user populates nothing: every file and folder under `wiki/` is created by you. Don't ask the user to "set up" anything. If `wiki/` or `wiki/log.md` doesn't exist when you first need it, create it.
+- **`wiki/`** — your domain. You create, update, link, and refactor markdown here. The user populates nothing: every file and folder under `wiki/` is created by you. Don't ask the user to "set up" anything. If `wiki/` or `wiki/log/` doesn't exist when you first need it, create it.
 - **`AGENTS.md`** (this file) — the schema and intent router. Co-evolve it with the user when conventions need to change.
 
 ## 2. Frontmatter
@@ -36,26 +36,11 @@ Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks
 | User asks to research / look up / find out something online | Use the **research** skill |
 | User says "lint" / "check the wiki" / "any patterns?" | Use the **lint** skill |
 | User states a personal preference or fact about themselves ("remember I…", "my X is Y") | `wiki/living/<topic>.md` — update existing or create |
-| User shares substantive content the future-you should be able to recall | Append to `wiki/log.md` (see §5) |
+| User shares substantive content the future-you should be able to recall | Use the **log** skill |
 
 If a user message is ambiguous between log and living, prefer log. Promotion is cheap; cleanup of premature pages is not. If intent is genuinely ambiguous between two skills, ask one short clarifying question.
 
-## 5. `log.md` — the default sink
-
-`wiki/log.md` captures *substantive content the user shares*. Append when the user states a fact, thought, opinion, decision, reaction, person, source, or anything worth recalling later.
-
-When in doubt, ask: *"is there anything new about the user, their world, or their thinking in this exchange?"* If no, don't log.
-
-```
-## [YYYY-MM-DD HH:MM] short heading
-free-text body
-```
-
-**One entry per session, not per turn.** A research thread, deliberation, shopping task, or any multi-turn exchange is a single log entry. While the session is live, *edit* that entry as the topic evolves — refine the heading, bump the timestamp to the latest turn, rewrite superseded reasoning in place. Do not append a fresh entry on every new turn; that fragments one coherent thread into noise.
-
-Don't structure mid-conversation. Don't ask "should I create a page for this?" If the user mentions the same book across ten separate sessions, that is ten log entries. Clustering happens during lint, not in flight.
-
-## 6. Working principles
+## 5. Working principles
 
 - **Browser automation only attaches to the user's running Chrome.** The `agent-browser` on PATH is a wrapper that injects `--cdp 9222` and refuses to run if Chrome is not on `127.0.0.1:9222`. Never try to bypass it (no `--auto-connect`, no fresh sessions, no headless, no alternative binary). If the wrapper exits non-zero, tell the user once and stop.
 - When you rename or move a wiki page, grep for and rewrite incoming `[[wikilinks]]` yourself — Obsidian's auto-rename only fires for renames done inside the Obsidian UI, not for shell edits.

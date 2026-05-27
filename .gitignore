@@ -3,6 +3,7 @@
 !.agents/skills/ingest/
 !.agents/skills/query/
 !.agents/skills/lint/
+!.agents/skills/log/
 .env.local
 .DS_Store
 node_modules/

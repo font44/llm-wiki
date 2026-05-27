@@ -15,7 +15,7 @@ Bring a source artifact into the wiki as a citable, indexed page.
 - User attaches a file directly in chat.
 - User pastes a URL with implied "ingest this" / "save this for later" intent.
 
-If a URL is mentioned only in passing (no clear "save it" intent), append to `log.md` instead — don't ingest.
+If a URL is mentioned only in passing (no clear "save it" intent), use the `log` skill instead — don't ingest.
 
 ## Workflow
 
