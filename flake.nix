@@ -51,12 +51,25 @@
             pkgs.defuddle
             pkgs.direnv
             pkgs.fd
+            pkgs.ffmpeg-headless
             pkgs.git
             pkgs.jq
             pkgs.nodejs
+            pkgs.python313
             pkgs.ripgrep
+            pkgs.uv
             pkgs.yq-go
           ];
+
+          shellHook = ''
+            export UV_TOOL_DIR="$PWD/.uv/tools"
+            export UV_TOOL_BIN_DIR="$PWD/.uv/bin"
+            export PATH="$UV_TOOL_BIN_DIR:$PATH"
+
+            if ! command -v markitdown >/dev/null 2>&1; then
+              uv tool install --quiet 'markitdown[all]'
+            fi
+          '';
         };
       });
 }

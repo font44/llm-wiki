@@ -9,6 +9,7 @@ node_modules/
 /tmp/
 .qmd/
 .direnv/
+.uv/
 
 .codex
 .claude

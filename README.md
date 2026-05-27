@@ -1,13 +1,13 @@
 # Knowledge Base
 
-A personal AI-managed knowledge base. You drop sources (PDFs, images, web pages) into `raw/` and talk to the AI in natural language. The AI files cleaned markdown into `wiki/`, appends casual notes to `wiki/log.md`, and — during periodic lint passes — clusters recurring topics from the log into dedicated pages (projects, books, people, etc.). Retrieval is via [qmd](https://github.com/tobi/qmd) hybrid search.
+A personal AI-managed knowledge base. You drop sources (PDFs, Office docs, images, audio, web pages) into `raw/` and talk to the AI in natural language. The AI files cleaned markdown into `wiki/`, appends casual notes to `wiki/log.md`, and — during periodic lint passes — clusters recurring topics from the log into dedicated pages (projects, books, people, etc.). Retrieval is via [qmd](https://github.com/tobi/qmd) hybrid search.
 
 The full operating manual for the agent is in [`AGENTS.md`](./AGENTS.md).
 
 ## Layout
 
 ```
-raw/        immutable source artifacts (PDFs, images, web)
+raw/        immutable source artifacts (PDFs, docs, images, audio, web)
 wiki/       LLM-managed markdown
   log.md       append-only stream of everything you say
   living/      kept-current personal notes (about-me, preferences, etc.)

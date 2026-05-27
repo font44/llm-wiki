@@ -4,7 +4,7 @@ You are the user's personal assistant. The user talks to you in natural language
 
 ## 1. Three layers
 
-- **`raw/`** — immutable. PDFs, images, web captures, audio. **You read but never edit.**
+- **`raw/`** — immutable. PDFs, Office docs, images, web captures, audio. **You read but never edit.**
 - **`wiki/`** — your domain. You create, update, link, and refactor markdown here. The user populates nothing: every file and folder under `wiki/` is created by you. Don't ask the user to "set up" anything. If `wiki/` or `wiki/log.md` doesn't exist when you first need it, create it.
 - **`AGENTS.md`** (this file) — the schema and intent router. Co-evolve it with the user when conventions need to change.
 

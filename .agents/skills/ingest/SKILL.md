@@ -1,7 +1,7 @@
 ---
 name: ingest
 description: Ingest a source artifact (PDF, image, web page, or URL) into the wiki. Use when the user says "ingest this", "process foo.pdf", drops a file in raw/, points you at a path elsewhere on disk, attaches a file in chat, pastes a URL with implied "look at this", or directly invokes this skill. Lands the artifact under raw/, writes a faithful markdown rendering to wiki/sources/, and reindexes qmd. Do NOT use this skill for casual mentions of a URL or file in conversation — only when ingest intent is explicit.
-allowed-tools: Bash(defuddle:*), Bash(npx defuddle:*), Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(qmd:*), Bash(mv:*), Bash(mkdir:*)
+allowed-tools: Bash(defuddle:*), Bash(npx defuddle:*), Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(qmd:*), Bash(markitdown:*), Bash(mv:*), Bash(mkdir:*)
 ---
 
 # Ingest
@@ -26,10 +26,14 @@ For every source:
 1. **Land** under `raw/<type>/`:
    - PDFs → `raw/pdfs/`
    - Images → `raw/images/`
+   - Office docs (docx, pptx, xlsx) → `raw/docs/`
+   - Audio (mp3, m4a, wav) → `raw/audio/`
    - Web pages → `raw/web/<slug>/` (containing the cleaned markdown and, when available, the original HTML)
 2. **Extract** the content:
-   - PDFs → Read tool
-   - Images → vision
+   - PDFs → `markitdown <path>`
+   - Images → vision for description; `markitdown <path>` for embedded EXIF/OCR metadata
+   - Office docs → `markitdown <path>`
+   - Audio → `markitdown <path>` (transcribes via the configured backend)
    - Web pages → `defuddle parse <url> --md` (or `agent-browser` for dynamic / auth-walled pages)
 3. **Write** `wiki/sources/<type>/<slug>.md` with frontmatter pointing at the raw path:
    ```yaml
@@ -48,9 +52,9 @@ For every source:
 
 If `wiki/sources/<type>/<slug>.md` already exists, stop and ask — don't clobber unless the user says "force" or "overwrite".
 
-## Unsupported formats
+## Format coverage
 
-docx, pptx, xlsx, audio: not supported in v1. Tell the user and ask whether to install a converter.
+`markitdown` is on PATH inside the dev shell (provisioned by `flake.nix`), so docx, pptx, xlsx, and audio are all supported alongside PDFs, images, and web pages. If `markitdown` errors out on a specific file, capture the error in the wiki page's frontmatter `notes:` and tell the user — do not silently land an empty page.
 
 ## Promotion is separate
 
