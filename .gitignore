@@ -14,7 +14,8 @@ node_modules/
 .models/
 
 .codex
-.claude
+.claude/*
+!.claude/settings.json
 
 /wiki
 /raw

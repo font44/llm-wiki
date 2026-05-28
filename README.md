@@ -1,6 +1,6 @@
 # Knowledge Base
 
-A personal AI-managed knowledge base. You drop sources (PDFs, Office docs, images, audio, web pages) into `raw/` and talk to the AI in natural language. The AI files cleaned markdown into `wiki/`, appends casual notes to `wiki/log.md`, and — during periodic lint passes — clusters recurring topics from the log into dedicated pages (projects, books, people, etc.). Retrieval is via [qmd](https://github.com/tobi/qmd) hybrid search.
+A personal AI-managed knowledge base. You drop sources (PDFs, Office docs, images, audio, web pages) into `raw/` and talk to the AI in natural language. The AI files cleaned markdown into `wiki/`, appends casual notes under `wiki/log/<date>/`, and — during periodic lint passes — clusters recurring topics from the log into dedicated pages (projects, books, people, etc.). Retrieval is via [qmd](https://github.com/tobi/qmd) hybrid search.
 
 The full operating manual for the agent is in [`AGENTS.md`](./AGENTS.md).
 
@@ -9,7 +9,7 @@ The full operating manual for the agent is in [`AGENTS.md`](./AGENTS.md).
 ```
 raw/        immutable source artifacts (PDFs, docs, images, audio, web)
 wiki/       LLM-managed markdown
-  log.md       append-only stream of everything you say
+  log/<date>/  one md page per session, append-only stream of everything you say
   living/      kept-current personal notes (about-me, preferences, etc.)
   sources/     one md page per ingested raw artifact
   <other>/     created by the AI during lint promotions (projects, books, people, …)
@@ -31,7 +31,7 @@ direnv allow              # or: nix develop
 npx -y skills experimental_install
 
 # 3. (Claude Code only) symlink skills into .claude/ so Claude Code discovers them
-mkdir -p .claude && ln -s ../.agents/skills .claude/skills
+ln -s ../.agents/skills .claude/skills
 
 # 4. Initialize the qmd index (one-time per machine)
 qmd init
@@ -49,5 +49,5 @@ Drive everything in natural language. The AI recognizes four intents:
 
 - **Ingest** — "ingest this PDF", "process foo.pdf", "I dropped a paper in raw/"
 - **Query** — "what did I read about X?", "do I have notes on Y?"
-- **Lint** — "check the wiki", "any patterns?" — runs structural checks AND clusters recurring `log.md` topics into proposed promotions; you approve per item
-- **Default** — anything else you say is appended to `log.md` as a timestamped entry
+- **Lint** — "check the wiki", "any patterns?" — runs structural checks AND clusters recurring log topics into proposed promotions; you approve per item
+- **Default** — anything else you say is appended to today's log session under `wiki/log/<date>/`
