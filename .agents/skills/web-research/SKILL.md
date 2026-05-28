@@ -1,16 +1,16 @@
 ---
-name: research
+name: web-research
 description: Web research workflow. Use ONLY when the user explicitly asks to research, look up, find out, or investigate something online, or directly invokes this skill. Drives an already-running Chrome via agent-browser auto-connect, opens search results, extracts clean markdown with defuddle, synthesizes a cited answer, and persists the result via the log skill. Do NOT use for questions answerable from the local wiki (use the query skill instead) or for ingesting a specific URL the user already named (use the ingest skill).
 allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(defuddle:*), Bash(npx defuddle:*), Bash(qmd:*), Bash(mkdir:*), Bash(date:*)
 ---
 
-# Research
+# Web research
 
 Drive web research on the user's already-running Chrome and persist the answer to the wiki.
 
 ## When to fire
 
-Triggers: "research X", "look up X", "find out about X", "investigate X", "search the web for X", "what's the latest on X", or direct invocation of this skill. If intent is ambiguous between research and query (the wiki may already know), check the wiki first via `qmd search` — only proceed to web research if local results are thin.
+Triggers: "research X", "look up X", "find out about X", "investigate X", "search the web for X", "what's the latest on X", or direct invocation of this skill. If intent is ambiguous between web-research and query (the wiki may already know), check the wiki first via `qmd search` — only proceed to web research if local results are thin.
 
 ## Workflow
 

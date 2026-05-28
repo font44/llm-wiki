@@ -1,7 +1,7 @@
 ---
 name: ingest
-description: Ingest a source artifact (PDF, image, web page, or URL) into the wiki. Use when the user says "ingest this", "process foo.pdf", drops a file in raw/, points you at a path elsewhere on disk, attaches a file in chat, pastes a URL with implied "look at this", or directly invokes this skill. Lands the artifact under raw/, writes a faithful markdown rendering to wiki/sources/, and reindexes qmd. Do NOT use this skill for casual mentions of a URL or file in conversation — only when ingest intent is explicit.
-allowed-tools: Bash(defuddle:*), Bash(npx defuddle:*), Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(qmd:*), Bash(markitdown:*), Bash(mv:*), Bash(mkdir:*)
+description: Ingest a source artifact (PDF, image, web page, or URL) into the wiki. Use when the user says "ingest this", "process foo.pdf", drops a file in raw/, points you at a path elsewhere on disk, attaches a file in chat, pastes a URL with implied "look at this", or directly invokes this skill. Lands the artifact under raw/ and writes a faithful markdown rendering to wiki/sources/. Do NOT use this skill for casual mentions of a URL or file in conversation — only when ingest intent is explicit.
+allowed-tools: Bash(defuddle:*), Bash(npx defuddle:*), Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(markitdown:*), Bash(mv:*), Bash(mkdir:*)
 ---
 
 # Ingest
@@ -43,7 +43,6 @@ For every source:
    ---
    ```
    Body: a faithful markdown rendering plus your caption / notes.
-4. **Reindex:** `qmd update && qmd embed`.
 
 ## Collisions
 

@@ -33,7 +33,7 @@ Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks
 |---|---|
 | User wants to ingest a source (file drop, attached file, "ingest this", URL with save intent) | Use the **ingest** skill → `wiki/sources/<YYYY-MM-DD>/<slug>.md` |
 | User asks something the wiki might know | Use the **query** skill |
-| User asks to research / look up / find out something online | Use the **research** skill |
+| User asks to research / look up / find out something online | Use the **web-research** skill |
 | User says "lint" / "check the wiki" / "any patterns?" | Use the **lint** skill |
 | User states a personal preference or fact about themselves ("remember I…", "my X is Y") | `wiki/living/<topic>.md` — update existing or create |
 | User shares substantive content the future-you should be able to recall | Use the **log** skill |

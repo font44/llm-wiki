@@ -1,5 +1,5 @@
 .agents/skills/*
-!.agents/skills/research/
+!.agents/skills/web-research/
 !.agents/skills/ingest/
 !.agents/skills/query/
 !.agents/skills/lint/

@@ -37,7 +37,7 @@ Read enough of the wiki to make these calls. Use `qmd search` / `qmd query` to f
 
 **Missing cross-references.** Pages that *should* link to each other but don't. Two book notes covering the same idea without `[[]]`s between them. A project page that name-drops a person without linking to `people/<them>.md`.
 
-**Data gaps worth researching.** Open questions, "I should check…" notes, or claims hedged with "not sure if…" that a quick web `research` pass could resolve. Propose specific questions to feed to the research skill.
+**Data gaps worth researching.** Open questions, "I should check…" notes, or claims hedged with "not sure if…" that a quick web `web-research` pass could resolve. Propose specific questions to feed to the web-research skill.
 
 **Recurring log topics → promotion candidates.** A cluster is roughly ≥3 entries on the same topic, or a clear thread (multi-day book reactions, sustained work on one initiative, repeated person mentions). Propose a destination directory (`projects/`, `books/`, `concepts/`, `ideas/`, etc. — invent new ones as needed).
 
@@ -71,7 +71,7 @@ The user approves items individually or in bulk. For each:
 - **Missing concept page** — create a stub with what you know, link the mentioning pages to it, then `qmd update && qmd embed`.
 - **Missing cross-reference** — add the `[[wikilink]]` in both directions where appropriate.
 - **Contradiction / superseded** — update the older page, mark the obsolete claim, cite the newer source. If you can't reconcile without more info, leave a `TODO:` and surface it next lint.
-- **Data gap** — kick off the research skill with the specific question.
+- **Data gap** — kick off the web-research skill with the specific question.
 - **Mechanical fix** — see auto-fixes below.
 
 ## Auto-fixes
