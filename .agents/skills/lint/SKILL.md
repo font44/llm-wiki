@@ -15,13 +15,19 @@ This is judgment work, not just a checker. Mechanical checks are the floor; the 
 - "lint", "check the wiki", "any patterns?", "what's stale?", "what's recurring?", "what should I look into?"
 - Don't run lint unsolicited.
 
+## Scope
+
+Lint operates only on `wiki/ai-workspace/`. It may **read** anywhere under `wiki/` for retrieval and cross-reference, but never edits, deletes, or flags structural issues outside `ai-workspace/`.
+
 ## 1. Mechanical checks (cheap, deterministic)
 
-- Every `wiki/` file has frontmatter with `title`, `created`, `updated`, `tags`.
-- Every `wiki/sources/<YYYY-MM-DD>/*.md` lives under a date dir matching `YYYY-MM-DD`, has the standard frontmatter, and its `source:` path resolves to an existing file in `raw/`.
+Run these against `wiki/ai-workspace/`:
+
+- Every markdown file has frontmatter with `title`, `created`, `updated`, `tags`.
+- Every `ai-workspace/sources/<YYYY-MM-DD>/*.md` lives under a date dir matching `YYYY-MM-DD` and has the standard frontmatter. Its `source:` is either a URL (web pages) or a relative path that resolves to an existing file under `wiki/raw/` (file artifacts).
 - Every wikilink `[[...]]` resolves to an existing file under `wiki/`.
-- `wiki/living/*.md` with `updated:` older than ~6 months is flagged stale.
-- `wiki/log/` layout: every entry lives at `wiki/log/<YYYY-MM-DD>/<HHMM>-<slug>.md`. Date dirs match `YYYY-MM-DD`; filenames start with a 4-digit `HHMM`. Each file has the standard frontmatter (`title`, `created`, `updated`, `tags` including `log`).
+- `ai-workspace/living/*.md` with `updated:` older than ~6 months is flagged stale.
+- `ai-workspace/log/` layout: every entry lives at `ai-workspace/log/<YYYY-MM-DD>/<HHMM>-<slug>.md`. Date dirs match `YYYY-MM-DD`; filenames start with a 4-digit `HHMM`. Each file has the standard frontmatter (`title`, `created`, `updated`, `tags` including `log`).
 
 ## 2. LLM-judgment passes (the important part)
 
@@ -31,7 +37,7 @@ Read enough of the wiki to make these calls. Use `qmd search` / `qmd query` to f
 
 **Superseded claims.** Claims in older pages that newer sources have updated, corrected, or made obsolete. Mark the older claim as superseded; cite the newer source.
 
-**Orphans.** Pages under `wiki/` that nothing else links to. Some orphans are fine (top-level living pages); flag the surprising ones — e.g. a `concepts/<X>.md` that no source or project mentions.
+**Orphans.** In-scope pages that nothing else links to. Some orphans are fine (top-level living pages); flag the surprising ones — e.g. a `concepts/<X>.md` that no source or project mentions.
 
 **Missing concept pages.** Recurring named concepts mentioned across multiple pages but lacking their own page. e.g. "deliberate practice" comes up in three book notes and a project page, but no `concepts/deliberate-practice.md` exists. Propose creating one.
 
@@ -60,14 +66,14 @@ Single punch list, grouped by pass. Each item is one or two lines, names the fil
 > - `projects/smoky-tractor.md` has "TODO: check what RPM the Kubota L3301 actually idles at" — run research?
 >
 > **Promotion**
-> - 7 log entries on Smoky Tractor over 3 weeks → `wiki/projects/smoky-tractor.md`?
-> - 5 entries on Sapolsky's *Determined* → `wiki/books/determined.md`?
+> - 7 log entries on Smoky Tractor over 3 weeks → `wiki/ai-workspace/projects/smoky-tractor.md`?
+> - 5 entries on Sapolsky's *Determined* → `wiki/ai-workspace/books/determined.md`?
 
 ## Acting on items
 
 The user approves items individually or in bulk. For each:
 
-- **Promotion** — create the destination page with frontmatter, move substance out of the source `wiki/log/<date>/<file>.md` (delete or empty the file once moved — don't leave stubs; the date dir simply has one fewer file), then `qmd update && qmd embed`. (No incoming-backlink rewrites needed; the page didn't exist before.)
+- **Promotion** — create the destination page under `wiki/ai-workspace/` with frontmatter, move substance out of the source `wiki/ai-workspace/log/<date>/<file>.md` (delete or empty the file once moved — don't leave stubs; the date dir simply has one fewer file), then `qmd update && qmd embed`. (No incoming-backlink rewrites needed; the page didn't exist before.)
 - **Missing concept page** — create a stub with what you know, link the mentioning pages to it, then `qmd update && qmd embed`.
 - **Missing cross-reference** — add the `[[wikilink]]` in both directions where appropriate.
 - **Contradiction / superseded** — update the older page, mark the obsolete claim, cite the newer source. If you can't reconcile without more info, leave a `TODO:` and surface it next lint.

@@ -28,7 +28,7 @@ Triggers: "research X", "look up X", "find out about X", "investigate X", "searc
 
 5. **Synthesize.** Write a concise answer in the user's voice — not a list of summaries-per-source. Cite inline with `[1]`, `[2]` markers; end with a `**Sources:**` numbered list of URLs. Every non-trivial claim gets a citation.
 
-6. **Persist via the log skill.** Write or update `wiki/log/<today>/<HHMM>-<slug>.md` per the log skill's rules. Title the entry `research: <short question>`. Body:
+6. **Persist via the log skill.** Write or update `wiki/ai-workspace/log/<today>/<HHMM>-<slug>.md` per the log skill's rules. Title the entry `research: <short question>`. Body:
 
    ```
    <synthesized answer with [1]/[2] inline markers>

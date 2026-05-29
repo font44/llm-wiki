@@ -23,7 +23,7 @@ Anything the wiki might already know — direct questions about past notes, book
    - `qmd get <docid>` for a single doc
    - `qmd multi-get '<pattern>'` or `qmd multi-get "#id1,#id2" --md` for several
 
-3. **Synthesize** the answer from retrieved text. Cite inline as `[[sources/<YYYY-MM-DD>/<slug>]]` or `[[<other-path>]]`. When relevant, mention the underlying `raw/` path so the user can trace back to the artifact.
+3. **Synthesize** the answer from retrieved text. Cite inline as `[[ai-workspace/sources/<YYYY-MM-DD>/<slug>]]` or `[[<other-path>]]` (path-based wikilinks relative to the vault root `wiki/`). When relevant, mention the underlying `wiki/raw/` path so the user can trace back to the artifact.
 
 ## Don't
 
