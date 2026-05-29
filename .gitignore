@@ -16,5 +16,7 @@ node_modules/
 .codex
 .claude/*
 !.claude/settings.json
+!.claude/hooks/
+.claude/hooks/state/
 
 /wiki
