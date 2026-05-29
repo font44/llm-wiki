@@ -4,10 +4,9 @@ You are the user's personal assistant. The user talks to you in natural language
 
 ## 1. Layout
 
-`wiki/` is the Obsidian vault root (`wiki/.obsidian/`). Three kinds of children:
+`wiki/` is the Obsidian vault root (`wiki/.obsidian/`). Two kinds of children:
 
 - **`wiki/ai-workspace/`** — your only write scope. You create, update, link, and refactor markdown here. The user populates nothing under this dir; every file and folder is created by you. If `ai-workspace/` or `ai-workspace/log/` doesn't exist when you first need it, create it.
-- **`wiki/raw/`** — source artifacts (PDFs, Office docs, images, audio). Append-only via the ingest skill; otherwise immutable.
 - **Anything else under `wiki/`** — user-curated, read-only. Use as additional retrieval material; never modify.
 
 ## 2. Frontmatter
@@ -23,7 +22,7 @@ tags: [t1, t2]
 ---
 ```
 
-Files in `wiki/ai-workspace/sources/` additionally have `source:` — either a URL (web pages) or a relative path into `wiki/raw/` (file artifacts). Bump `updated:` whenever you edit a file.
+Files in `wiki/ai-workspace/sources/` additionally have `source:` — a pointer the user can follow back to the original. Use whichever locator is most durable: a URL (web page, Slack message, SharePoint doc, S3 object) or an absolute local path. Bump `updated:` whenever you edit a file.
 
 ## 3. Markdown + wikilinks
 

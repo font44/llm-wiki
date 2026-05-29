@@ -6,13 +6,18 @@ allowed-tools: Bash(defuddle:*), Bash(npx defuddle:*), Bash(agent-browser:*), Ba
 
 # Ingest
 
-Bring a source artifact into the wiki as a citable, indexed page. `wiki/raw/` and `wiki/ai-workspace/sources/` are both sharded by date.
+Bring a source artifact into the wiki as a citable, indexed page. The page captures the extracted content plus a `source:` pointer the user can follow back to the original. `wiki/ai-workspace/sources/` is sharded by date.
 
 ## Workflow
 
-1. **For file artifacts**, move into `wiki/raw/<YYYY-MM-DD>/` first (create the date dir if missing). Web pages skip this — the URL is the citation.
+1. **Determine the `source:` pointer** before extracting. Use the most durable locator the user gave you:
+   - Web page, Slack message etc. → the URL.
+   - SharePoint / Quip / Drive doc → the document URL.
+   - Local file → its absolute path on disk (e.g. `/Users/vijayvar/Downloads/foo.pdf`).
 
-2. **Extract** the content:
+   If the user has no durable location for the artifact, leave `source` empty.
+
+2. **Extract** the content from the original location (no copying):
    - PDFs, Office docs (docx/pptx/xlsx), images → `markitdown <path>` (images also get a vision description)
    - Audio (mp3, m4a, wav) → convert to 16 kHz mono WAV (whisper-cli only reads WAV), then transcribe:
      ```sh
@@ -29,16 +34,16 @@ Bring a source artifact into the wiki as a citable, indexed page. `wiki/raw/` an
    created: YYYY-MM-DD
    updated: YYYY-MM-DD
    tags: [...]
-   source: ../../../raw/<YYYY-MM-DD>/<...>   # file artifact: relative path into wiki/raw/
-   # source: https://example.com/article     # web page: the URL
+   source: https://example.com/article            # URL (web, Slack, SharePoint, etc.)
+   # source: /Users/vijayvar/Downloads/foo.pdf    # or absolute local path
    ---
    ```
-   Body: the faithful markdown rendering. Keep it the artifact's voice, not yours — no commentary, reactions, or takeaways inline.
+   Body: the faithful markdown rendering. Keep it the artifact's voice, not yours — no commentary, reactions, or takeaways inline. The extracted markdown is the durable record; the pointer may rot, and that's accepted.
 
 4. **Capture the user's perspective** if the ingest carries any (a paper they're reacting to, a meeting they sat in, a doc they're reviewing). Route this to the **log** skill, with a wikilink back to the source page.
 
 ## Edge cases
 
-- **Collision:** if the source path exists, stop and ask — don't clobber unless the user says "force" or "overwrite".
+- **Collision:** if the source page path exists, stop and ask — don't clobber unless the user says "force" or "overwrite".
 - **Extraction failure:** if `markitdown` errors, capture the error in the page's `notes:` frontmatter and tell the user. Don't silently land an empty page.
 - **No promotion mid-ingest.** Clustering and promotion happen during lint.
