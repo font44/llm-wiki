@@ -6,28 +6,17 @@ allowed-tools: Bash(rg:*), Bash(qmd:*), Bash(find:*), Bash(stat:*)
 
 # Lint
 
-Periodic LLM health-check of the wiki. The wiki grows messy on its own — new sources contradict old ones, claims go stale, concepts get name-checked without ever getting a page, log entries pile up around recurring topics. Lint is when you go through the whole vault and surface what needs attention.
+Periodic LLM health-check of `wiki/ai-workspace/`. The wiki grows messy on its own — sources contradict, claims go stale, concepts get name-checked without ever getting a page, log entries pile up around recurring topics. Lint is judgment work; mechanical checks are the floor, the LLM passes are the value.
 
-This is judgment work, not just a checker. Mechanical checks are the floor; the real value is the LLM-only passes below.
-
-## When to fire
-
-- "lint", "check the wiki", "any patterns?", "what's stale?", "what's recurring?", "what should I look into?"
-- Don't run lint unsolicited.
-
-## Scope
-
-Lint operates only on `wiki/ai-workspace/`. It may **read** anywhere under `wiki/` for retrieval and cross-reference, but never edits, deletes, or flags structural issues outside `ai-workspace/`.
+Don't run unsolicited. May read anywhere under `wiki/` for cross-reference, but only flags or edits files inside `ai-workspace/`.
 
 ## 1. Mechanical checks (cheap, deterministic)
 
-Run these against `wiki/ai-workspace/`:
-
 - Every markdown file has frontmatter with `title`, `created`, `updated`, `tags`.
-- Every `ai-workspace/sources/<YYYY-MM-DD>/*.md` lives under a date dir matching `YYYY-MM-DD` and has the standard frontmatter. Its `source:` is either a URL (web pages) or a relative path that resolves to an existing file under `wiki/raw/` (file artifacts).
+- Every `ai-workspace/sources/<YYYY-MM-DD>/*.md` lives under a matching date dir, and its `source:` resolves to an existing file under `wiki/raw/` (file artifacts) or is a URL (web pages).
 - Every wikilink `[[...]]` resolves to an existing file under `wiki/`.
 - `ai-workspace/living/*.md` with `updated:` older than ~6 months is flagged stale.
-- `ai-workspace/log/` layout: every entry lives at `ai-workspace/log/<YYYY-MM-DD>/<HHMM>-<slug>.md`. Date dirs match `YYYY-MM-DD`; filenames start with a 4-digit `HHMM`. Each file has the standard frontmatter (`title`, `created`, `updated`, `tags` including `log`).
+- `ai-workspace/log/` layout: each entry at `log/<YYYY-MM-DD>/<HHMM>-<slug>.md`, with `log` in `tags:`.
 
 ## 2. LLM-judgment passes (the important part)
 
@@ -49,7 +38,7 @@ Read enough of the wiki to make these calls. Use `qmd search` / `qmd query` to f
 
 ## Output
 
-Single punch list, grouped by pass. Each item is one or two lines, names the file paths involved, and is independently approvable. Example:
+A single punch list, grouped by pass. Each item is one or two lines, names the offending paths, and is independently approvable. Example:
 
 > **Mechanical**
 > - Frontmatter: 47/47 files OK.
@@ -71,19 +60,16 @@ Single punch list, grouped by pass. Each item is one or two lines, names the fil
 
 ## Acting on items
 
-The user approves items individually or in bulk. For each:
+User approves items individually or in bulk. For each:
 
-- **Promotion** — create the destination page under `wiki/ai-workspace/` with frontmatter, move substance out of the source `wiki/ai-workspace/log/<date>/<file>.md` (delete or empty the file once moved — don't leave stubs; the date dir simply has one fewer file), then `qmd update && qmd embed`. (No incoming-backlink rewrites needed; the page didn't exist before.)
-- **Missing concept page** — create a stub with what you know, link the mentioning pages to it, then `qmd update && qmd embed`.
-- **Missing cross-reference** — add the `[[wikilink]]` in both directions where appropriate.
+- **Promotion** — create the destination page with frontmatter, move substance out of the source log file (delete the file once moved; don't leave stubs).
+- **Missing concept page** — create a stub with what you know and link the mentioning pages to it.
+- **Missing cross-reference** — add `[[wikilinks]]` in both directions.
 - **Contradiction / superseded** — update the older page, mark the obsolete claim, cite the newer source. If you can't reconcile without more info, leave a `TODO:` and surface it next lint.
-- **Data gap** — kick off the web-research skill with the specific question.
-- **Mechanical fix** — see auto-fixes below.
+- **Data gap** — invoke web-research with the specific question.
 
 ## Auto-fixes
 
-On explicit "fix it" / "auto-fix":
-- Frontmatter normalization (add missing keys with sensible defaults — `created`/`updated` from file mtime, empty `tags: []`, title from H1 or filename).
-- Stale `updated:` bumped to file mtime.
+On explicit "fix it" / "auto-fix": normalize frontmatter (fill missing keys with `created`/`updated` from mtime, empty `tags: []`, title from H1 or filename) and bump stale `updated:` to mtime.
 
-Do NOT auto-fix broken wikilinks, missing `source:` paths, contradictions, or promotion candidates — those all need human judgment. Report them and stop.
+Never auto-fix broken wikilinks, missing `source:` paths, contradictions, or promotion candidates — those need human judgment.

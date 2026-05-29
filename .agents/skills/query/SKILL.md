@@ -8,25 +8,21 @@ allowed-tools: Bash(qmd:*), Bash(rg:*), mcp__qmd__*
 
 Answer from the local wiki, citing sources.
 
-## When to fire
-
-Anything the wiki might already know — direct questions about past notes, books, projects, people, decisions, preferences, or ingested sources. If the user asks something that clearly isn't in the wiki ("what's the latest news on X"), route to the web-research skill instead.
-
 ## Workflow
 
 1. **Search** for candidates:
    - `qmd search "<terms>"` — BM25 lexical
    - `qmd query "<question>"` — hybrid semantic
-   - For harder searches use structured queries with `intent:`, `lex:`, `vec:`, `hyde:` fields.
+   - For harder cases, structured queries with `intent:`, `lex:`, `vec:`, `hyde:` fields.
 
-2. **Retrieve** the full sources — search snippets are leads, not answers:
-   - `qmd get <docid>` for a single doc
+2. **Retrieve** the full sources — snippets are leads, not answers:
+   - `qmd get <docid>` for one doc
    - `qmd multi-get '<pattern>'` or `qmd multi-get "#id1,#id2" --md` for several
 
-3. **Synthesize** the answer from retrieved text. Cite inline as `[[ai-workspace/sources/<YYYY-MM-DD>/<slug>]]` or `[[<other-path>]]` (path-based wikilinks relative to the vault root `wiki/`). When relevant, mention the underlying `wiki/raw/` path so the user can trace back to the artifact.
+3. **Synthesize** from retrieved text. Cite inline with path-based wikilinks (`[[ai-workspace/sources/<YYYY-MM-DD>/<slug>]]`). Mention the underlying `wiki/raw/` path when it helps the user trace back to the artifact.
 
 ## Don't
 
 - Don't answer from snippets alone when the user needs facts, decisions, quotes, or nuance.
-- Don't paste whole documents into the response — a compact note + citations is enough.
-- Don't go to the web for an answer that might be in the wiki without searching first.
+- Don't paste whole documents — a compact note + citations is enough.
+- Don't go to the web before searching the wiki.

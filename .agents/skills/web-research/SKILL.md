@@ -8,42 +8,30 @@ allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(defuddle:*
 
 Drive web research on the user's already-running Chrome and persist the answer to the wiki.
 
-## When to fire
-
-Triggers: "research X", "look up X", "find out about X", "investigate X", "search the web for X", "what's the latest on X", or direct invocation of this skill. If intent is ambiguous between web-research and query (the wiki may already know), check the wiki first via `qmd search` — only proceed to web research if local results are thin.
-
 ## Workflow
 
-1. **Connect.** Use `agent-browser --auto-connect` to attach to the user's running Chrome over CDP. Reuses logins/cookies; the user can watch. Do NOT spin up a fresh headless session — that loses auth and trips captchas. If no Chrome is running, tell the user once and stop.
+1. **Connect.** Run `agent-browser` to attach to the user's Chrome — the wrapper handles CDP. Reuses logins/cookies; the user can watch. If the wrapper exits non-zero, tell the user once and stop. (See AGENTS.md §5.)
 
-2. **Search.** Open a search engine (Google by default) and run a query derived from the user's question. Refine the query if results look weak.
+2. **Search.** Open a search engine (Google by default) and run a query derived from the user's question. Refine if results look weak. Ignore the search engine's AI answers.
 
-3. **Read adaptively until evidence is sufficient.** Open results one at a time. For each URL:
-   - Prefer `defuddle parse <url> --md` for clean markdown — cheaper tokens than driving the browser to read the page.
-   - Fall back to agent-browser only when defuddle fails (auth walls, JS-only content, dynamic apps).
+3. **Read adaptively until evidence is sufficient.** For each URL: prefer `defuddle parse <url> --md` (cheaper tokens than driving the browser); fall back to agent-browser when defuddle fails (auth walls, JS-only, dynamic apps). Stop when 3-5 reputable sources agree and the question is answered; keep going when sources are vague, conflicting, or only partial.
 
-   Stop opening new sources when 2–3 reputable sources agree on the key facts and the user's question is clearly answered. Keep going — open more, refine the query, try a different angle — when sources are vague, low-quality, conflicting, or only partially cover the question.
+4. **Handle disagreement honestly.** Note conflicts in the answer; characterize *why* sources differ (date, scope, reliability) before picking a side or leaving it open.
 
-4. **Handle disagreement honestly.** If sources conflict, note the disagreement in the answer rather than papering over it. Try to characterize *why* they differ (date, scope, source reliability) before picking a side or leaving it open.
+5. **Synthesize.** Write a concise answer in the user's voice, not a list of per-source summaries. Cite inline with `[1]`, `[2]`; every non-trivial claim gets a citation. End with a `**Sources:**` numbered list of URLs.
 
-5. **Synthesize.** Write a concise answer in the user's voice — not a list of summaries-per-source. Cite inline with `[1]`, `[2]` markers; end with a `**Sources:**` numbered list of URLs. Every non-trivial claim gets a citation.
-
-6. **Persist via the log skill.** Write or update `wiki/ai-workspace/log/<today>/<HHMM>-<slug>.md` per the log skill's rules. Title the entry `research: <short question>`. Body:
+6. **Persist via the log skill.** Title the entry `research: <short question>`. Body:
 
    ```
-   <synthesized answer with [1]/[2] inline markers>
+   <answer with [1]/[2] inline markers>
 
    **Sources:**
    [1] https://...
    [2] https://...
    ```
 
-   The log skill handles directory creation, frontmatter, the same-session continuation rule, and `qmd update && qmd embed`.
+   The log skill handles directory creation, frontmatter, and continuation.
 
-7. **Print the answer in chat too**, so the user sees it without opening the file. End with a one-line pointer to the file path written.
+7. **Print the answer in chat** so the user sees it without opening the file. End with a one-line pointer to the file path written.
 
-## Notes
-
-- Ignore the search engine's AI answers. Do your own research.
-- Do NOT promote research entries into their own pages mid-flight. If a topic recurs, the lint skill clusters and promotes during a lint pass — same rule as any other log entry.
-- If the user's question is local (e.g. "what did I write about X"), this is the wrong skill — use the query skill instead.
+Don't promote research entries mid-flight; recurring topics get clustered during lint, same as any other log entry.
