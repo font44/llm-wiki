@@ -1,7 +1,6 @@
 ---
 name: log
 description: Append substantive content the user shares to the dated log. Use when the user states a fact, opinion, decision, reaction, person, source, or any thought worth recalling later that isn't an ingest, a wiki query, a lint, or a `living/` update. One file per session under `wiki/ai-workspace/log/<date>/<HHMM>-<slug>.md` — the live session file is edited in place as the topic evolves; a fresh file is only created for a genuinely new thread. Also used by the web-research skill as the persistence step.
-allowed-tools: Bash(mkdir:*), Bash(date:*), Bash(ls:*), Bash(rg:*)
 ---
 
 # Log
@@ -23,7 +22,12 @@ wiki/ai-workspace/log/
 
 ## Trigger test
 
-Ask yourself: *"is there anything new about the user, their world, or their thinking in this exchange?"* If no, don't log. Conversational filler doesn't get logged. Ingests, queries, research, and `living/` updates each have their own skill; this is the catch-all.
+Log only:
+
+1. Things the user told you that future-you should remember.
+2. Things you inferred about the user that future-you should remember.
+
+Never log what you did. The Git diff is the record. If a session did work and surfaced a user fact, log the fact only.
 
 ## Continuation rule (the most important rule)
 

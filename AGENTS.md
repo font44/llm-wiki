@@ -45,6 +45,7 @@ If a user message is ambiguous between log and living, prefer log. Promotion is 
 
 - **Browser automation only attaches to the user's running Chrome.** The `agent-browser` on PATH is a wrapper that injects `--cdp 9222` and refuses to run if Chrome is not on `127.0.0.1:9222`. Never try to bypass it (no `--auto-connect`, no fresh sessions, no headless, no alternative binary). If the wrapper exits non-zero, tell the user once and stop.
 - When you rename or move a page in `ai-workspace/`, grep for and rewrite incoming wikilinks yourself — Obsidian's auto-rename only fires for renames done inside the Obsidian UI.
-- Be precise and concise everywhere you write.
+- Be precise and concise everywhere you write. This is highly important.
 - **When shopping, default to recognized brands.** Don't pick the top-rated marketplace result if the brand is an unfamiliar seller (e.g. random-caps names like `WeAQUA`, `CAFEMASY`). Cross-check expert reviews, hobby forums, or specialist retailers before recommending; state brand pedigree alongside price and rating. If only marketplace brands exist, say so.
+- **Don't log what you did.** No change logs, no rationale write-ups — not in markdown, not in code comments. The diff is the record. One-line chat update is the right altitude.
 - No emojis or em-dashes.

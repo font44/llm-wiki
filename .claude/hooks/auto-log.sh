@@ -59,7 +59,7 @@ PROMPT_HEADER
 
 ## Procedure
 
-1. Read the transcript. Identify substantive items the future-user would want recalled: stated facts, opinions, decisions, reactions, named people or sources, conclusions of deliberation. Skip pure tool execution, ingests, wiki queries, lints, chitchat, and anything that's just "what Claude did." Apply the log skill's trigger test verbatim: *"is there anything new about the user, their world, or their thinking?"*
+1. Read the transcript. Log ONLY: (a) things the user told you future-you should remember, or (b) things you inferred about the user future-you should remember. Never log what AI did — the diff is the record. If the session did work, surfaced an AI error correction AND surfaced a user fact, log the fact only.
 
 2. Read every existing log file listed above in full. Treat their contents as the canonical record of what's already been logged for this session. Do not rephrase, re-summarize, or duplicate anything already there even if you would word it differently.
 

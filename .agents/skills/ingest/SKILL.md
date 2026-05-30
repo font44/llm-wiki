@@ -1,7 +1,6 @@
 ---
 name: ingest
 description: Ingest a source artifact (PDF, image, web page, or URL) into the wiki. Use when the user says "ingest this", "process foo.pdf", drops a file in wiki/raw/, points you at a path elsewhere on disk, attaches a file in chat, pastes a URL with implied "look at this", or directly invokes this skill. Lands the artifact under wiki/raw/ and writes a faithful markdown rendering to wiki/ai-workspace/sources/. Do NOT use this skill for casual mentions of a URL or file in conversation — only when ingest intent is explicit.
-allowed-tools: Bash(defuddle:*), Bash(npx defuddle:*), Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(markitdown:*), Bash(mv:*), Bash(mkdir:*)
 ---
 
 # Ingest
@@ -17,15 +16,12 @@ Bring a source artifact into the wiki as a citable, indexed page. The page captu
 
    If the user has no durable location for the artifact, leave `source` empty.
 
-2. **Extract** the content from the original location (no copying):
-   - PDFs, Office docs (docx/pptx/xlsx), images → `markitdown <path>` (images also get a vision description)
-   - Audio (mp3, m4a, wav) → convert to 16 kHz mono WAV (whisper-cli only reads WAV), then transcribe:
-     ```sh
-     ffmpeg -i <path> -ar 16000 -ac 1 -c:a pcm_s16le /tmp/<slug>.wav
-     whisper-cli -m .models/ggml-large-v3-turbo.bin -f /tmp/<slug>.wav -otxt -of <out-stem>
-     ```
-     If `.models/ggml-large-v3-turbo.bin` is missing, download per the README.
+2. **Extract** the content from the original location (no copying, except for images — see below):
+   - PDFs, Office docs (docx/pptx/xlsx) → `markitdown <path>`
+   - Images → move the file into `wiki/ai-workspace/sources/<YYYY-MM-DD>/<slug>.<ext>` first, then run `markitdown` on the moved path (gives OCR text plus a vision description). (Images are small enough to keep adjacent to their rendering.)
+   - Audio (mp3, m4a, wav) and video (mp4, mov) → `.agents/skills/ingest/transcribe.py <path> [out-stem]`. Outputs `<out>.md`. Pass `INITIAL_PROMPT="..."` with comma-separated jargon (product names, acronyms) for the meeting's domain; defaults are AWS/SageMaker.
    - Web pages → `defuddle parse <url> --md`; fall back to `agent-browser` for dynamic / auth-walled pages.
+   - Zoom recordings / signed CloudFront URLs (curl 403s) → `.agents/skills/ingest/zoom-download.sh <share-url> [filename.mp4]`. File lands in `~/Downloads`. Signed URL expires in a few hours — reopen the page if returning later. Grab chat panel + chapter markers via `agent-browser snapshot` first; they flag silent stretches and link companion docs.
 
 3. **Write the source page** at `wiki/ai-workspace/sources/<YYYY-MM-DD>/<slug>.md`:
    ```yaml
@@ -36,6 +32,7 @@ Bring a source artifact into the wiki as a citable, indexed page. The page captu
    tags: [...]
    source: https://example.com/article            # URL (web, Slack, SharePoint, etc.)
    # source: /Users/vijayvar/Downloads/foo.pdf    # or absolute local path
+   # source: ai-workspace/sources/2026-05-29/foo.png  # for images, point at the moved file (relative to wiki/)
    ---
    ```
    Body: the faithful markdown rendering. Keep it the artifact's voice, not yours — no commentary, reactions, or takeaways inline. The extracted markdown is the durable record; the pointer may rot, and that's accepted.
