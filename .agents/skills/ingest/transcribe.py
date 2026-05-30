@@ -57,7 +57,7 @@ def main():
     prompt = os.environ.get(
         "INITIAL_PROMPT",
         "AWS, Amazon, SageMaker, Bedrock, S3, EC2, EBS, Lambda, IAM, "
-        "Claude, Git, Git repo, GitHub, lineage, dataset.",
+        "Git, Git repo, GitHub, lineage, dataset.",
     )
     out_path = f"{out_stem}.md"
 

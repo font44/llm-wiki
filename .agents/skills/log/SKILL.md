@@ -1,6 +1,6 @@
 ---
 name: log
-description: Append substantive content the user shares to the dated log. Use when the user states a fact, opinion, decision, reaction, person, source, or any thought worth recalling later that isn't an ingest, a wiki query, a lint, or a `living/` update. One file per session under `wiki/ai-workspace/log/<date>/<HHMM>-<slug>.md` — the live session file is edited in place as the topic evolves; a fresh file is only created for a genuinely new thread. Also used by the web-research skill as the persistence step.
+description: Append substantive content the user shares to the dated log. Use when the user states a fact, opinion, decision, reaction, person, source, or any thought worth recalling later that isn't an ingest, a wiki query, a lint, or a `living/` update. One file per session under `wiki/ai-workspace/log/<date>/<slug>.md` — the live session file is edited in place as the topic evolves; a fresh file is only created for a genuinely new thread. Also used by the web-research skill as the persistence step.
 ---
 
 # Log
@@ -10,14 +10,14 @@ Default sink for substantive content the user shares. Layout:
 ```
 wiki/ai-workspace/log/
   2026-05-26/
-    1742-profitec-go-cleaning.md
-    1608-home-theater-build.md
+    profitec-go-cleaning.md
+    home-theater-build.md
   2026-05-25/
-    2031-determined-sapolsky-reactions.md
+    determined-sapolsky-reactions.md
 ```
 
 - One directory per local date (`YYYY-MM-DD`), created lazily on first write of the day.
-- One file per session, `<HHMM>-<slug>.md`. `HHMM` is 24-hour local time when the session *started*; slug is a 2-5 word kebab-case summary.
+- One file per session, `<slug>.md`. Slug is a 2-5 word kebab-case summary.
 - Each file is a standalone page.
 
 ## Trigger test
@@ -37,7 +37,7 @@ To continue:
 
 1. List `wiki/ai-workspace/log/<today>/` sorted by name (newest first).
 2. If a file from earlier today is on the *same topic*, edit it in place: refine the title, bump `updated:`, rewrite superseded reasoning, append sub-sections.
-3. If the topic is genuinely new, create a new file with the current `HHMM` and a fresh slug.
+3. If the topic is genuinely new, create a new file with a fresh slug.
 
 "Same topic" is judgment work. A follow-up question on the same investigation, person, project, or decision is the same session. A wholly unrelated subject is a new session. When in doubt, continue the current file.
 
@@ -46,8 +46,8 @@ To continue:
 ```yaml
 ---
 title: "<short, human-readable>"
-created: YYYY-MM-DD HH:MM
-updated: YYYY-MM-DD HH:MM
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
 tags: [log]
 ---
 ```

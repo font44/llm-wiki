@@ -16,7 +16,7 @@ Don't run unsolicited. May read anywhere under `wiki/` for cross-reference, but 
 - Every `ai-workspace/sources/<YYYY-MM-DD>/*.md` lives under a matching date dir, and its `source:` resolves to an existing file under `wiki/raw/` (file artifacts) or is a URL (web pages).
 - Every wikilink `[[...]]` resolves to an existing file under `wiki/`.
 - `ai-workspace/living/*.md` with `updated:` older than ~6 months is flagged stale.
-- `ai-workspace/log/` layout: each entry at `log/<YYYY-MM-DD>/<HHMM>-<slug>.md`, with `log` in `tags:`.
+- `ai-workspace/log/` layout: each entry at `log/<YYYY-MM-DD>/<slug>.md`, with `log` in `tags:`.
 
 ## 2. LLM-judgment passes (the important part)
 

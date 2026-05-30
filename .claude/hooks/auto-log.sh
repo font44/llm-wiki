@@ -67,7 +67,7 @@ PROMPT_HEADER
 
 4. Branch:
    - **No existing logs + new content is substantive** → invoke the `log` skill to create a new file under wiki/ai-workspace/log/<today>/.
-   - **Existing logs + new content is substantive** → edit the most topically relevant existing file in place. Append to it, refine the title if the scope shifted, and bump `updated:` to the current local time. Only start a new file if the new content is a genuinely unrelated thread.
+   - **Existing logs + new content is substantive** → edit the most topically relevant existing file in place. Append to it, refine the title if the scope shifted, and bump `updated:` to today's date. Only start a new file if the new content is a genuinely unrelated thread.
    - **Existing logs + nothing new** → exit silently. Print "no-op: existing logs already cover this session" and stop.
    - **Not substantive at all** → exit silently. Print "no-op: nothing substantive to log" and stop.
 
