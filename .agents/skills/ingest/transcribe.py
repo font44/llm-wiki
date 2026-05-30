@@ -21,6 +21,19 @@ from silero_vad import get_speech_timestamps, load_silero_vad
 SAMPLE_RATE = 16000
 
 
+def collapse_loops(segments):
+    out = []
+    for s in segments:
+        text = s["text"].strip()
+        if not text:
+            continue
+        text = re.sub(r"(\b\w+\b[ ,.]*)(\1){3,}", r"\1", text)
+        if out and text == out[-1]:
+            continue
+        out.append(text)
+    return out
+
+
 def load_audio(path: str) -> np.ndarray:
     container = av.open(path)
     stream = container.streams.audio[0]
@@ -78,13 +91,14 @@ def main():
         initial_prompt=prompt,
     )
 
+    lines = collapse_loops(r["segments"])
     with open(out_path, "w") as f:
-        for s in r["segments"]:
-            text = s["text"].strip()
-            if text:
-                f.write(text + "\n")
+        f.write("\n".join(lines) + "\n")
 
-    print(f"wrote {len(r['segments'])} segments to {out_path}", file=sys.stderr)
+    print(
+        f"wrote {len(lines)} lines (from {len(r['segments'])} segments) to {out_path}",
+        file=sys.stderr,
+    )
 
 
 if __name__ == "__main__":
