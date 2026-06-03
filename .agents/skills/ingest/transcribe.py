@@ -1,13 +1,4 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "mlx-whisper",
-#   "silero-vad",
-#   "av",
-#   "numpy",
-# ]
-# ///
+#!/usr/bin/env python3
 # Transcribe audio/video to <out>.md (plain prose markdown).
 # Override INITIAL_PROMPT for non-AWS-jargon.
 import os

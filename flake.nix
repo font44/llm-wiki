@@ -58,18 +58,14 @@
             pkgs.python313
             pkgs.ripgrep
             pkgs.uv
-			pkgs.whisper-cpp
+            pkgs.whisper-cpp
             pkgs.yq-go
           ];
 
           shellHook = ''
-            export UV_TOOL_DIR="$PWD/.uv/tools"
-            export UV_TOOL_BIN_DIR="$PWD/.uv/bin"
-            export PATH="$UV_TOOL_BIN_DIR:$PATH"
-
-            if ! command -v markitdown >/dev/null 2>&1; then
-              uv tool install --quiet 'markitdown[all]'
-            fi
+            export UV_PYTHON_PREFERENCE=only-system
+            export UV_PYTHON_DOWNLOADS=never
+            export PATH="$PWD/.venv/bin:$PATH"
           '';
         };
       });
