@@ -23,6 +23,8 @@ Bring a source artifact into the wiki as a citable, indexed page. The page captu
    - Web pages → `defuddle parse <url> --md`; fall back to `agent-browser` for dynamic / auth-walled pages.
    - Zoom recordings / signed CloudFront URLs (curl 403s) → `.agents/skills/ingest/zoom-download.sh <share-url> [filename.mp4]`. File lands in `~/Downloads`. Signed URL expires in a few hours — reopen the page if returning later. Grab chat panel + chapter markers via `agent-browser snapshot` first; they flag silent stretches and link companion docs.
 
+   **Embedded images in extracted docs**: text extractors return markdown only — image blobs aren't downloaded. Before considering the ingest done, grep the extracted markdown for image refs (`/blob/`, `Screenshot`, `.png`, `.jpg`) and fetch each one through whatever tool can reach it (the same auth-walled extractor, an authenticated browser, etc.). Use Obsidian embeds in the markdown: `![[diagram-<id>.png]]`. **Do not** use reference-style `![alt][N]` + `[N]: path.png` — Obsidian preview does not render that reliably. Same rule for any inline `link: <url>` lines next to images: rewrite as `[label](url)` so they're clickable.
+
 3. **Write the source page** at `wiki/ai-workspace/sources/<YYYY-MM-DD>/<slug>.md`:
    ```yaml
    ---

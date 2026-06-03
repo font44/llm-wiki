@@ -1,12 +1,12 @@
 ---
 name: web-research
-description: Web research workflow. Use ONLY when the user explicitly asks to research, look up, find out, or investigate something online, or directly invokes this skill. Drives an already-running Chrome via agent-browser auto-connect, opens search results, extracts clean markdown with defuddle, synthesizes a cited answer, and persists the result via the log skill. Do NOT use for questions answerable from the local wiki (use the query skill instead) or for ingesting a specific URL the user already named (use the ingest skill).
+description: Web research workflow. Use ONLY when the user explicitly asks to research, look up, find out, or investigate something online, or directly invokes this skill. Drives an already-running Chrome via agent-browser auto-connect, opens search results, extracts clean markdown with defuddle, and synthesizes a cited answer in chat. Does NOT auto-persist — the user invokes the log skill explicitly if they want the answer saved. Do NOT use for questions answerable from the local wiki (use the query skill instead) or for ingesting a specific URL the user already named (use the ingest skill).
 allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(defuddle:*), Bash(npx defuddle:*), Bash(qmd:*), Bash(mkdir:*), Bash(date:*)
 ---
 
 # Web research
 
-Drive web research on the user's already-running Chrome and persist the answer to the wiki.
+Drive web research on the user's already-running Chrome and return a cited answer in chat.
 
 ## Workflow
 
@@ -19,19 +19,3 @@ Drive web research on the user's already-running Chrome and persist the answer t
 4. **Handle disagreement honestly.** Note conflicts in the answer; characterize *why* sources differ (date, scope, reliability) before picking a side or leaving it open.
 
 5. **Synthesize.** Write a concise answer in the user's voice, not a list of per-source summaries. Cite inline with `[1]`, `[2]`; every non-trivial claim gets a citation. End with a `**Sources:**` numbered list of URLs.
-
-6. **Persist via the log skill.** Title the entry `research: <short question>`. Body:
-
-   ```
-   <answer with [1]/[2] inline markers>
-
-   **Sources:**
-   [1] https://...
-   [2] https://...
-   ```
-
-   The log skill handles directory creation, frontmatter, and continuation.
-
-7. **Print the answer in chat** so the user sees it without opening the file. End with a one-line pointer to the file path written.
-
-Don't promote research entries mid-flight; recurring topics get clustered during lint, same as any other log entry.

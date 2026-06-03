@@ -37,9 +37,9 @@ Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks
 | User asks to research / look up / find out something online | Use the **web-research** skill |
 | User says "lint" / "check the wiki" / "any patterns?" | Use the **lint** skill |
 | User states a personal preference or fact about themselves ("remember I…", "my X is Y") | `wiki/ai-workspace/living/<topic>.md` — update existing or create |
-| User shares substantive content the future-you should be able to recall | Use the **log** skill |
+| User explicitly asks to log something (`/log`, "log this", "save this") | Use the **log** skill |
 
-If a user message is ambiguous between log and living, prefer log. Promotion is cheap; cleanup of premature pages is not. If intent is genuinely ambiguous between two skills, ask one short clarifying question.
+If intent is genuinely ambiguous between two skills, ask one short clarifying question.
 
 ## 5. Working principles
 

@@ -1,11 +1,11 @@
 ---
 name: log
-description: Append substantive content the user shares to the dated log. Use when the user states a fact, opinion, decision, reaction, person, source, or any thought worth recalling later that isn't an ingest, a wiki query, a lint, or a `living/` update. One file per session under `wiki/ai-workspace/log/<date>/<slug>.md` — the live session file is edited in place as the topic evolves; a fresh file is only created for a genuinely new thread. Also used by the web-research skill as the persistence step.
+description: Append substantive content from the current conversation to the dated log. Use ONLY when the user explicitly invokes this skill (e.g., `/log`, "log this", "save this to the log"). Do NOT auto-trigger on substantive content, session end, or as a side-effect of other skills — the user decides what gets logged. One file per session under `wiki/ai-workspace/log/<date>/<slug>.md`; the live session file is edited in place as the topic evolves, a fresh file is only created for a genuinely new thread.
 ---
 
 # Log
 
-Default sink for substantive content the user shares. Layout:
+Sink for substantive content the user asks you to record. Layout:
 
 ```
 wiki/ai-workspace/log/
@@ -22,7 +22,7 @@ wiki/ai-workspace/log/
 
 ## Trigger test
 
-Log only:
+When invoked, log only:
 
 1. Things the user told you that future-you should remember.
 2. Things you inferred about the user that future-you should remember.
@@ -56,7 +56,7 @@ Bump `updated:` on every edit. Add domain tags freely (`[log, espresso, shopping
 
 ## Body
 
-Write what was said and decided in clean prose — no fixed structure. Use H2/H3 for subject-matter sections in long multi-turn entries; don't use headings for chronology (the filename and `updated:` already carry that). Research entries follow the web-research body convention (synthesized answer, inline `[1]/[2]`, `**Sources:**` list).
+Write what was said and decided in clean prose — no fixed structure. Use H2/H3 for subject-matter sections in long multi-turn entries; don't use headings for chronology (the filename and `updated:` already carry that).
 
 ## After writing
 
