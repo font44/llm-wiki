@@ -1,7 +1,7 @@
 ---
 name: web-research
-description: Web research workflow. Use ONLY when the user explicitly asks to research, look up, find out, or investigate something online, or directly invokes this skill. Drives an already-running Chrome via agent-browser auto-connect, opens search results, extracts clean markdown with defuddle, and synthesizes a cited answer in chat. Does NOT auto-persist — the user invokes the log skill explicitly if they want the answer saved. Do NOT use for questions answerable from the local wiki (use the query skill instead) or for ingesting a specific URL the user already named (use the ingest skill).
-allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(defuddle:*), Bash(npx defuddle:*), Bash(qmd:*), Bash(mkdir:*), Bash(date:*)
+description: Web research workflow. Use ONLY when the user explicitly asks to research, look up, find out, or investigate something online, or directly invokes this skill. Drives an already-running Chrome via agent-browser auto-connect, opens search results, extracts clean markdown with defuddle, and synthesizes a cited answer in chat. Does NOT auto-persist — the user invokes the log skill explicitly if they want the answer saved.
+allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(defuddle:*), Bash(npx defuddle:*)
 ---
 
 # Web research

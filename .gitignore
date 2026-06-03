@@ -1,23 +1,14 @@
 .agents/skills/*
 !.agents/skills/web-research/
-!.agents/skills/ingest/
-!.agents/skills/query/
-!.agents/skills/lint/
 !.agents/skills/log/
 .env.local
 .DS_Store
 node_modules/
 /tmp/
-.qmd/
 .direnv/
-.uv/
-.venv/
-.models/
 
 .codex
 .claude/*
 !.claude/settings.json
-!.claude/hooks/
-.claude/hooks/state/
 
 /wiki

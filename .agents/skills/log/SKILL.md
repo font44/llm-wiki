@@ -1,6 +1,6 @@
 ---
 name: log
-description: Append substantive content from the current conversation to the dated log. Use ONLY when the user explicitly invokes this skill (e.g., `/log`, "log this", "save this to the log"). Do NOT auto-trigger on substantive content, session end, or as a side-effect of other skills — the user decides what gets logged. One file per session under `wiki/ai-workspace/log/<date>/<slug>.md`; the live session file is edited in place as the topic evolves, a fresh file is only created for a genuinely new thread.
+description: Append substantive content from the current conversation to the dated log. Use ONLY when the user explicitly invokes this skill (e.g., `/log`, "log this", "save this to the log"). Do NOT auto-trigger on substantive content, session end, or as a side-effect of other skills — the user decides what gets logged. One file per session under `wiki/ai-workspace/<date>/<slug>.md`; the live session file is edited in place as the topic evolves, a fresh file is only created for a genuinely new thread.
 ---
 
 # Log
@@ -8,7 +8,7 @@ description: Append substantive content from the current conversation to the dat
 Sink for substantive content the user asks you to record. Layout:
 
 ```
-wiki/ai-workspace/log/
+wiki/ai-workspace/
   2026-05-26/
     profitec-go-cleaning.md
     home-theater-build.md
@@ -35,7 +35,7 @@ Never log what you did. The Git diff is the record. If a session did work and su
 
 To continue:
 
-1. List `wiki/ai-workspace/log/<today>/` sorted by name (newest first).
+1. List `wiki/ai-workspace/<today>/` sorted by name (newest first).
 2. If a file from earlier today is on the *same topic*, edit it in place: refine the title, bump `updated:`, rewrite superseded reasoning, append sub-sections.
 3. If the topic is genuinely new, create a new file with a fresh slug.
 
@@ -60,6 +60,6 @@ Write what was said and decided in clean prose — no fixed structure. Use H2/H3
 
 ## After writing
 
-One line back to the user: e.g. `logged to wiki/ai-workspace/log/2026-05-26/1742-profitec-go-cleaning.md`.
+One line back to the user: e.g. `logged to wiki/ai-workspace/2026-05-26/profitec-go-cleaning.md`.
 
-Don't ask the user to confirm filenames or frontmatter; lint will catch mistakes. Promotion happens in lint, not here.
+Don't ask the user to confirm filenames or frontmatter.

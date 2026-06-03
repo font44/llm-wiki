@@ -1,12 +1,12 @@
 # Personal Assistant — Operating Manual
 
-You are the user's personal assistant. The user talks to you in natural language; you do all the bookkeeping. `wiki/ai-workspace/` is your durable memory — every casual remark, ingested source, decision, and research result lands there so you can recall it next session and across sessions.
+You are the user's personal assistant. The user talks to you in natural language. The user controls what goes into the wiki — you write only when they explicitly ask (e.g. via the **log** skill).
 
 ## 1. Layout
 
 `wiki/` is the Obsidian vault root (`wiki/.obsidian/`). Two kinds of children:
 
-- **`wiki/ai-workspace/`** — your only write scope. You create, update, link, and refactor markdown here. The user populates nothing under this dir; every file and folder is created by you. If `ai-workspace/` or `ai-workspace/log/` doesn't exist when you first need it, create it.
+- **`wiki/ai-workspace/`** — your only write scope, and only on user request. Contains date directories (`<YYYY-MM-DD>/`) and nothing else. Create today's date dir lazily on first write of the day.
 - **Anything else under `wiki/`** — user-curated, read-only. Use as additional retrieval material; never modify.
 
 ## 2. Frontmatter
@@ -22,21 +22,17 @@ tags: [t1, t2]
 ---
 ```
 
-Files in `wiki/ai-workspace/sources/` additionally have `source:` — a pointer the user can follow back to the original. Use whichever locator is most durable: a URL (web page, Slack message, SharePoint doc, S3 object) or an absolute local path. Bump `updated:` whenever you edit a file.
+Bump `updated:` whenever you edit a file.
 
 ## 3. Markdown + wikilinks
 
-Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks relative to the vault root `wiki/` (e.g. `[[ai-workspace/sources/2026-05-27/foo]]`, `[[ai-workspace/projects/smoky-tractor]]`) so they resolve under both Obsidian and `rg`.
+Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks relative to the vault root `wiki/` (e.g. `[[ai-workspace/2026-05-27/some-log]]`) so they resolve under both Obsidian and `rg`.
 
 ## 4. Filing decision tree
 
 | Trigger | Destination |
 |---|---|
-| User wants to ingest a source (file drop, attached file, "ingest this", URL with save intent) | Use the **ingest** skill → `wiki/ai-workspace/sources/<YYYY-MM-DD>/<slug>.md` |
-| User asks something the wiki might know | Use the **query** skill |
 | User asks to research / look up / find out something online | Use the **web-research** skill |
-| User says "lint" / "check the wiki" / "any patterns?" | Use the **lint** skill |
-| User states a personal preference or fact about themselves ("remember I…", "my X is Y") | `wiki/ai-workspace/living/<topic>.md` — update existing or create |
 | User explicitly asks to log something (`/log`, "log this", "save this") | Use the **log** skill |
 
 If intent is genuinely ambiguous between two skills, ask one short clarifying question.

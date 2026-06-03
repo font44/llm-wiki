@@ -46,27 +46,15 @@
         devShells.default = pkgs.mkShell {
           packages = [
             agent-browser-wrapped
-            agents.qmd
 
             pkgs.defuddle
             pkgs.direnv
             pkgs.fd
-            pkgs.ffmpeg
             pkgs.git
             pkgs.jq
             pkgs.nodejs
-            pkgs.python313
             pkgs.ripgrep
-            pkgs.uv
-            pkgs.whisper-cpp
-            pkgs.yq-go
           ];
-
-          shellHook = ''
-            export UV_PYTHON_PREFERENCE=only-system
-            export UV_PYTHON_DOWNLOADS=never
-            export PATH="$PWD/.venv/bin:$PATH"
-          '';
         };
       });
 }
