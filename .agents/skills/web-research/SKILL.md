@@ -1,6 +1,6 @@
 ---
 name: web-research
-description: Web research workflow. Use ONLY when the user explicitly asks to research, look up, find out, or investigate something online, or directly invokes this skill. Drives an already-running Chrome via agent-browser auto-connect, opens search results, extracts clean markdown with defuddle, and synthesizes a cited answer in chat. Does NOT auto-persist — the user invokes the log skill explicitly if they want the answer saved.
+description: Web research workflow. Use ONLY when the user explicitly asks to research, look up, find out, or investigate something online, or directly invokes this skill. Drives an already-running Chrome via agent-browser, opens search results, and synthesizes cited answers.
 allowed-tools: Bash(agent-browser:*), Bash(npx agent-browser:*), Bash(defuddle:*), Bash(npx defuddle:*)
 ---
 
@@ -12,10 +12,18 @@ Drive web research on the user's already-running Chrome and return a cited answe
 
 1. **Connect.** Run `agent-browser` to attach to the user's Chrome — the wrapper handles CDP. Reuses logins/cookies; the user can watch. If the wrapper exits non-zero, tell the user once and stop. (See AGENTS.md §5.)
 
-2. **Search.** Open a search engine (Google by default) and run a query derived from the user's question. Refine if results look weak. Ignore the search engine's AI answers.
+2. **Search.** Open `https://search.brave.com/` and run a query derived from the user's question. Refine if results look weak.
 
-3. **Read adaptively until evidence is sufficient.** For each URL: prefer `defuddle parse <url> --md` (cheaper tokens than driving the browser); fall back to agent-browser when defuddle fails (auth walls, JS-only, dynamic apps). Stop when 3-5 reputable sources agree and the question is answered; keep going when sources are vague, conflicting, or only partial.
+3. **Read deeply.** Fetch and read full page content from **≥10 distinct domains** before synthesizing. Search snippets, SERP text, and AI summaries do NOT count — only the actual fetched page body counts. Prefer cheaper extraction (e.g. `defuddle parse <url> --md`); fall back to driving the browser when extraction fails (auth walls, JS-only, dynamic apps). Keep going past 10 if sources are vague, conflicting, or only partial.
 
-4. **Handle disagreement honestly.** Note conflicts in the answer; characterize *why* sources differ (date, scope, reliability) before picking a side or leaving it open.
+4. **Source-quality gate.** Count toward the 10 only: official docs, manufacturer/vendor sites, peer-reviewed or specialist outlets, hobby forums and communities with traceable expertise, primary reporting from established publications. Reject and do NOT count: SEO listicles, AI-generated content farms, Pinterest/Quora-tier roundups, syndicated rewrites of other sources.
 
-5. **Synthesize.** Write a concise answer in the user's voice, not a list of per-source summaries. Cite inline with `[1]`, `[2]`; every non-trivial claim gets a citation. End with a `**Sources:**` numbered list of URLs.
+5. **Recency check.** If the answer depends on current state (prices, versions, releases, regulations, availability), at least one source must be dated within the last 12 months. Note its date inline next to the citation.
+
+6. **Refute pass.** After drafting the answer, run at least one query designed to contradict it — e.g. `<claim> wrong`, `<claim> myth`, `<claim> debunked`, `<claim> 2026 update`. If results dispute the draft, revise; if they don't, you've stress-tested it.
+
+7. **Handle disagreement honestly.** Note conflicts in the answer; characterize *why* sources differ (date, scope, reliability) before picking a side or leaving it open.
+
+8. **Pre-synthesis self-audit.** Before writing the answer, confirm out loud: ≥10 qualifying domains read in full, refute pass run, recency satisfied where relevant, conflicts noted. If any box is unchecked, go back.
+
+9. **Synthesize.** Write a concise answer in the user's voice, not a list of per-source summaries. Cite inline with `[1]`, `[2]`; every non-trivial claim gets a citation. End with a `**Sources:**` numbered list of URLs.
