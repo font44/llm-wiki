@@ -39,7 +39,7 @@ If intent is genuinely ambiguous between two skills, ask one short clarifying qu
 
 ## 5. Working principles
 
-- **Browser automation only attaches to the user's running Chrome.** The `agent-browser` on PATH is a wrapper that injects `--cdp 9222` and refuses to run if Chrome is not on `127.0.0.1:9222`. Never try to bypass it (no `--auto-connect`, no fresh sessions, no headless, no alternative binary). If the wrapper exits non-zero, tell the user once and stop.
+- **Browser automation must attach to the user's running Chrome on `127.0.0.1:9222`.** The `agent-browser` binary does **not** auto-attach — without an explicit attach step it silently spawns its own headless `--user-data-dir=/tmp/...` Chrome (no cookies, no extensions, invisible window), which gets bot-walled everywhere. Always run `agent-browser connect 9222` as the **first** command of any browser session, before `open`/`tab`/`snapshot`/etc. If `curl -s http://127.0.0.1:9222/json/version` fails, tell the user that their debug Chrome isn't running and stop. Never bypass this with `--auto-connect`, headless flags, or an alternative binary.
 - When you rename or move a page in `ai-workspace/`, grep for and rewrite incoming wikilinks yourself — Obsidian's auto-rename only fires for renames done inside the Obsidian UI.
 - Be precise and concise everywhere you write. This is highly important.
 - **When shopping, default to recognized brands.** Don't pick the top-rated marketplace result if the brand is an unfamiliar seller (e.g. random-caps names like `WeAQUA`, `CAFEMASY`). Cross-check expert reviews, hobby forums, or specialist retailers before recommending; state brand pedigree alongside price and rating. If only marketplace brands exist, say so.
