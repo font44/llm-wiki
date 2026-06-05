@@ -34,8 +34,12 @@
 
             for arg in "$@"; do
               case "$arg" in
-                --cdp|--cdp=*|--auto-connect|connect)
+                --cdp|--cdp=*)
                   exec "$real" "$@"
+                  ;;
+                --auto-connect|connect)
+                  echo "agent-browser: refusing '$arg' — it bypasses --cdp 9222 injection and spawns a headless Chrome that squats on 9222. Use plain 'agent-browser <subcommand>' instead." >&2
+                  exit 1
                   ;;
               esac
             done
