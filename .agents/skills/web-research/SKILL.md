@@ -12,7 +12,7 @@ Drive web research on the user's already-running Chrome and return a cited answe
 
 1. **Connect.** Run `agent-browser` to attach to the user's Chrome — the wrapper handles CDP. Reuses logins/cookies; the user can watch. If the wrapper exits non-zero, tell the user once and stop. (See AGENTS.md §5.)
 
-2. **Search.** Open `https://search.brave.com/` and run a query derived from the user's question. Refine if results look weak.
+2. **Search.** Open `https://search.brave.com/` and run a query derived from the user's question. Refine if results look weak. **Do NOT read the search engine's AI summary / "answer" panel** (Brave Answer, Google AI Overview, Bing Copilot, etc.) — they are unsourced, often wrong, and bias your synthesis before you've read primaries. Use the SERP only to pick links to open.
 
 3. **Read deeply.** Fetch and read full page content from **≥10 distinct domains** before synthesizing. Search snippets, SERP text, and AI summaries do NOT count — only the actual fetched page body counts. Prefer cheaper extraction (e.g. `defuddle parse <url> --md`); fall back to driving the browser when extraction fails (auth walls, JS-only, dynamic apps). Keep going past 10 if sources are vague, conflicting, or only partial.
 
@@ -27,3 +27,5 @@ Drive web research on the user's already-running Chrome and return a cited answe
 8. **Pre-synthesis self-audit.** Before writing the answer, confirm out loud: ≥10 qualifying domains read in full, refute pass run, recency satisfied where relevant, conflicts noted, and every non-trivial evaluative claim has ≥2 independent non-conflicted backers (different ownership, not syndicating each other) — flag any single-source claim inline (e.g. "single-source: [3]"). If any box is unchecked, go back.
 
 9. **Synthesize.** Write a concise answer in the user's voice, not a list of per-source summaries. Cite inline with `[1]`, `[2]`; every non-trivial claim gets a citation. End with a `**Sources:**` numbered list of URLs, marking conflicted sources with `(conflicted)` so the reader knows their role.
+
+   **Sources must be direct links to the actual content** — the editorial article, forum thread, Reddit post, official doc page, etc. that you read. NEVER cite search engine result URLs (`search.brave.com/search?q=...`, `google.com/search?...`), aggregator landing pages, or homepages when you read a specific subpage. If you can't produce a direct link to the page whose body you read, you didn't actually read it — go back to step 3.
