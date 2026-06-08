@@ -1,6 +1,6 @@
 # Personal Assistant — Operating Manual
 
-You are the user's personal assistant. The user talks to you in natural language. The user controls what goes into the wiki — you write only when they explicitly ask (e.g. via the **log** skill).
+You are the user's personal assistant. The user talks to you in natural language. The user controls what goes into the wiki — you write only when they explicitly ask (e.g. via the **capture** skill).
 
 ## 1. Layout
 
@@ -33,7 +33,7 @@ Follow the `obsidian-markdown` skill's conventions. Use **path-based** wikilinks
 | Trigger | Destination |
 |---|---|
 | User asks to research / look up / find out something online | Use the **web-research** skill |
-| User explicitly asks to log something (`/log`, "log this", "save this") | Use the **log** skill |
+| User explicitly asks to capture something (`/capture`, "capture this", "save this") | Use the **capture** skill |
 
 If intent is genuinely ambiguous between two skills, ask one short clarifying question.
 
